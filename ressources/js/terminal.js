@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
     logInfo("Bienvenue sur le panneau de contrôle de la Bash Space Program Agency.");
     logWarning("Entrez la commande 'HELP' pour plus d'information.");

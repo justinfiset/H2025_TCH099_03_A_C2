@@ -8,3 +8,16 @@ body {
     font-size: 1.2rem;
     padding: 1em;
 }
+
+@keyframes cursor-blink {
+    from { display: inline; 
+        color: white;
+    }
+    to { 
+        color: rgba(0, 0, 0, 0);
+    }
+}
+
+#terminal-cursor {
+    animation: cursor-blink 700ms infinite;
+}
