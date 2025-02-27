@@ -1,12 +1,12 @@
 body {
     background: linear-gradient(to top, #000, #000, #222, #222);
     background-size: cover;
-    background-size: 100% 1px;
+    background-size: 100% 0.5vh;
 
     color: #33FF00;
-    font-family: 'Courier', Courier, monospace;
+    font-family: monospace;
     text-shadow: 0 0 10px;
-    animation: terminal-lines 20s infinite linear;
+    animation: terminal-lines 30s infinite linear;
 }
 
 @keyframes terminal-lines {
@@ -14,7 +14,7 @@ body {
         background-position: 0 0;
     } 
     to {
-        background-position: 0 -10px;
+        background-position: 0 -100vh;
     }
 }
 
