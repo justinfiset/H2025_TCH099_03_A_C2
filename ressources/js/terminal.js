@@ -67,6 +67,6 @@ function log(text, color) {
     window.scrollTo(0, document.body.scrollHeight); // On vient scroll la fenêtre à la bonne place (au bas)
 }
 
-function logInfo(text)    { log(text, "greenyellow"); }
-function logWarning(text) { log(text, "orange");      }
-function logError(text)   { log(text, "orangered");   }
+function logInfo(text)    { log(text, "#33FF00"); }
+function logWarning(text) { log(text, "#FFB000");      }
+function logError(text)   { log(text, "#FB2E01");   }
