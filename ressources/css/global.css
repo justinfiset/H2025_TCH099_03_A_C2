@@ -18,6 +18,15 @@ body {
     }
 }
 
+#terminal-input {
+    font-size: 0; /* To prevent whitespace added by the browser betweens <p> tags */
+}
+
+#terminal-input * {
+    display: inline;
+    font-size: 1.2rem;
+}
+
 #terminal-cursor {
     animation: cursor-blink 700ms infinite;
 }
