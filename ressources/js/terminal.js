@@ -4,7 +4,7 @@ let inputPrefix = "";
 document.addEventListener("DOMContentLoaded", () => {
     initTerminal();
 
-    logInfo("Bienvenue sur le panneau de contrôle de la Bash Space Program Agency.");
+    logInfo("<b>Bienvenue sur le panneau de contrôle de la Bash Space Program Agency.</b>");
     logWarning("Entrez la commande 'HELP' pour plus d'information.");
     logError("CECI EST UN TEST D'ERREUR À ENLEVER APRÈS LE CHARGEMENT DE LA PAGE");
 });
@@ -35,6 +35,24 @@ document.addEventListener("keydown", (e) => {
 
 function sendCommand(input) {
     logInfo(inputPrefix + input);
+
+    switch(input.toUpperCase()) {
+        case "HELP":
+            logInfo("Voici la liste des commandes disponibles :");
+            logInfo("- HELP : Affiche la liste des commandes disponibles.");
+            logInfo("- CLEAR : Efface le contenu de la console.");
+            break;
+        case "CLEAR":
+            clearTerminal();
+            break;
+        default:
+            logError("Commande inconnue. Entrez 'HELP' pour plus d'information.");
+            break;
+    }
+}
+
+function clearTerminal() {
+    document.getElementById("terminal-output").innerHTML = "<p></p>";
 }
 
 function isNumber(char) {
