@@ -9,6 +9,11 @@ body {
     animation: terminal-lines 30s infinite linear;
 }
 
+p {
+    padding: 0;
+    margin: 0 0 0.5em 0;
+}
+
 @keyframes terminal-lines {
     from {
         background-position: 0 0;

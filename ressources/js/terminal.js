@@ -38,9 +38,9 @@ function sendCommand(input) {
 
     switch(input.toUpperCase()) {
         case "HELP":
-            logInfo("Voici la liste des commandes disponibles :");
-            logInfo("- HELP : Affiche la liste des commandes disponibles.");
-            logInfo("- CLEAR : Efface le contenu de la console.");
+            logInfo(`Voici la liste des commandes disponibles : <br>
+                - HELP : Affiche la liste des commandes disponibles. <br>
+                - CLEAR : Efface le contenu de la console.`);
             break;
         case "CLEAR":
             clearTerminal();
