@@ -1,9 +1,9 @@
 body {
-    background: linear-gradient(to top, #000, #000, #222, #222);
+    background: linear-gradient(to top, #031e11, #031e11, #042314, #042314);
     background-size: cover;
     background-size: 100% 0.5vh;
 
-    color: #33FF00;
+    color: #14fd88;
     font-family: monospace;
     text-shadow: 0 0 10px;
     animation: terminal-lines 30s infinite linear;
@@ -21,12 +21,17 @@ body {
 #terminal-content {
     width: 100%;
     font-size: 1.2rem;
-    padding: 1em;
 }
 
-#terminal-content p, #terminal-input {
-    transform-origin: 0 0;
-    transform: scaleX(1.1) scaleY(0.8);
+#terminal-title,  #terminal-content *::selection  {
+    background-color: #14fd88;
+    color: black;
+    text-shadow: none;
+    filter: blur(0.5px);
+}
+
+#terminal-output, #terminal-input-prefix, #terminal-title {
+    padding-left: 1em;
 }
 
 @keyframes cursor-blink {
@@ -42,7 +47,7 @@ body {
     font-size: 0; /* To prevent whitespace added by the browser betweens <p> tags */
 }
 
-#terminal-input * {
+#terminal-input *{
     display: inline;
     font-size: 1.2rem;
 }
