@@ -24,6 +24,11 @@ body {
     padding: 1em;
 }
 
+#terminal-content p, #terminal-input {
+    transform-origin: 0 0;
+    transform: scaleX(1.1) scaleY(0.8);
+}
+
 @keyframes cursor-blink {
     from { display: inline; 
         color: white;
