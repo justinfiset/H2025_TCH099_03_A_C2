@@ -101,18 +101,21 @@ try{
     //Permet d'afficher les instructions du module
     logInfo(data["description"]+"<br> Les instructions du module:");
 
-    for(let i=0;i<data.instructions.length;i++){
+    data.instructions.forEach((instruction) => {
 
-             
-            logInfo(data.instructions[`${i}`]);
-        
-        
+        logInfo(`ID: ${instruction.id_}` + ``);
 
-    }
+        instruction.forEach((elt)=>{
+            if(elt != 'id_'){
+                logInfo(elt);
+            }
+        })
+    })
 
 }catch(e){
     //Renvoie une erreur si le fetch n'a pas fonctionné
     logError("ERREUR SYSTÈME!!!!!<br>Nous n'avons pas pu récupérer les instructions demandées.<br> Veuillez réessayer.");
+    logError(e);
 }
 }
 
