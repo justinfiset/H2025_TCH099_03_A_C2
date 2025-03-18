@@ -1,6 +1,6 @@
 let inputText = ""; // Le texte entré par l'utilisateur
 let inputPrefix = ""; // Le préfixe de l'entrée de l'utilisateur (texte non modifiable par l'utilisateur avant le curseur)
-
+let urlPrefix ='http://localhost:5000'
 /**
  * Évenement qui apelle la fonction d'initialisation du termianl lorsque le contenu de la page est chargé
  * On affiche aussi un message de bienvenue
@@ -56,19 +56,64 @@ document.addEventListener("keydown", (e) => {
 function sendCommand(input) {
     logInfo(inputPrefix + input);
 
-    switch(input.toUpperCase()) {
+    let words = input.split(' ');
+    
+    switch(words[0].toUpperCase()) {
         case "HELP":
             logInfo(`Voici la liste des commandes disponibles : <br>
                 - HELP : Affiche la liste des commandes disponibles. <br>
-                - CLEAR : Efface le contenu de la console.`);
+                - CLEAR : Efface le contenu de la console.<br>
+                - INSTRUCTION 'matricule' 'module' : Permet d'avoir les instructions.`);
             break;
         case "CLEAR":
             clearTerminal();
             break;
+        case "INSTRUCTION" :
+                
+                if(words.length ==3){
+                    getInstruction(words[1],words[2]);
+                    
+                }else{
+                    logError("Input incomplet veuillez recommencer ou sinon entrer la commande 'HELP'.");
+                }
+                break;
         default:
             logError("Commande inconnue. Entrez 'HELP' pour plus d'information.");
             break;
     }
+}
+
+
+/**
+ * Fonction traite la commande de l'instruction entrée par l'utilisateur
+ * @param {String} matricule, le matricule du module
+ * @param {String} module, le nom du module
+ */
+async function getInstruction(matricule,module){
+try{
+    let url = `${urlPrefix}/api/v1/verify?matricule=${matricule}&module=${module}`
+    
+    //Permet de récupérer la réponse de l'api
+    const response = await fetch(url);
+    
+    //Permet de récupérer les données
+    const data = await response.json();
+    //Permet d'afficher les instructions du module
+    logInfo(data["description"]+"<br> Les instructions du module:");
+
+    for(let i=0;i<data.instructions.length;i++){
+
+             
+            logInfo(data.instructions[`${i}`]);
+        
+        
+
+    }
+
+}catch(e){
+    //Renvoie une erreur si le fetch n'a pas fonctionné
+    logError("ERREUR SYSTÈME!!!!!<br>Nous n'avons pas pu récupérer les instructions demandées.<br> Veuillez réessayer.");
+}
 }
 
 /**
