@@ -1,6 +1,6 @@
 let inputText = ""; // Le texte entré par l'utilisateur
 let inputPrefix = ""; // Le préfixe de l'entrée de l'utilisateur (texte non modifiable par l'utilisateur avant le curseur)
-
+let urlPrefix ='http://localhost:5000'
 /**
  * Évenement qui apelle la fonction d'initialisation du termianl lorsque le contenu de la page est chargé
  * On affiche aussi un message de bienvenue
@@ -56,19 +56,143 @@ document.addEventListener("keydown", (e) => {
 function sendCommand(input) {
     logInfo(inputPrefix + input);
 
-    switch(input.toUpperCase()) {
+    let words = input.split(' ');
+    
+    switch(words[0].toUpperCase()) {
         case "HELP":
             logInfo(`Voici la liste des commandes disponibles : <br>
                 - HELP : Affiche la liste des commandes disponibles. <br>
-                - CLEAR : Efface le contenu de la console.`);
+                - CLEAR : Efface le contenu de la console.<br>
+                - INSTRUCTION [matricule] [module] : Permet d'avoir les instructions pour résoudre un module donnée.`);
             break;
         case "CLEAR":
             clearTerminal();
             break;
+        case "INSTRUCTION" :
+                
+                if(words.length ==3){
+                    getInstruction(words[1],words[2]);
+                    
+                }else{
+                    logError("Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'.");
+                }
+                break;
         default:
             logError("Commande inconnue. Entrez 'HELP' pour plus d'information.");
             break;
     }
+}
+
+
+/**
+ * Fonction traite la commande de l'instruction entrée par l'utilisateur
+ * @param {String} matricule, le matricule du module
+ * @param {String} module, le nom du module
+ */
+async function getInstruction(matricule,module){
+try{
+    let url = `${urlPrefix}/api/v1/verify?matricule=${matricule}&module=${module}`;
+
+
+    //Permet de récupérer la réponse de l'api
+    const response = await fetch(url);
+    
+    //Permet de récupérer les données
+    const data = await response.json();
+    //Permet d'afficher les instructions du module
+
+    //Lance une erreur si la description est indéfini.
+    if(data["description"]===undefined){
+        throw new Error("Aucune description");
+    }
+    logInfo(data["description"]+"<br> Les instructions du module:");
+
+
+    //Création de la chaine 
+    let str =""; 
+
+    if(module==="PatPlay"){
+        patplayResponse(data,str);
+    }else{
+        moduleClassique(data,str);
+    }
+}catch(e){
+    //Renvoie une erreur si le fetch n'a pas fonctionné
+    logError("ERREUR SYSTÈME!!!!!<br>Nous n'avons pas pu récupérer les instructions demandées.<br> Veuillez réessayer.");
+    // TODO : À effacer avant de remettre au client, car la ligne suivante sert seulement pour le débogage.
+    logError(`Pour débug voici l'erreur système :<br> ${e}`);
+}
+}
+/**
+ * Fonction qui traite l'affichage des instructions des modules considérés comme "classique".
+ * @param {any} data 
+ * @param {String} str
+ */
+function moduleClassique(data,str){
+   
+    
+    
+    data.instructions.forEach((instruction) => {
+        
+        //On prend chaque élément du module
+        for(let key in instruction){
+            if(instruction[key]!=instruction.id_){
+                str+=`<br>[${key} :  { ${instruction[key]} }]  <br> `;
+            }
+        } 
+        //Création du saut de la chaine
+        str+='<br>';
+    });
+
+    //On affiche les instructions du modules
+    logInfo(str);
+}
+
+/**
+ * Fonction qui permet de traiter les cas qui possède deux tableau d'instruction à l'intérieur du tableau en général.
+ * Cette fonction a été créé pour patplay principalement.
+ * @param {any} data 
+ * @param {String} str
+ */
+function patplayResponse(data,str){
+
+
+    str += "#Première partie des instructions : <br>";
+
+    data.instructions1.forEach((instruction) => {
+        
+        //On prend chaque élément du module
+        for(let key in instruction){
+
+            // TODO : Trouver un moyen que le if fonctionne pour que l'id ne soit pas visible lors d'une demande.
+            /*if(instruction[key]===instruction.carre||instruction[key]===instruction.cercle||
+                instruction[key]===instruction.triangle||instruction[key]===instruction.couleur||
+                instruction[key]===instruction.x){
+              */      
+                str+=`[${key} :  { ${instruction[key]} }]  `;
+            //}
+        } 
+        //Création du saut de la chaine
+        str+='<br>';
+    });
+
+    str+="<br>#Deuxième partie des instructions : <br>"
+
+    data.instructions2.forEach((instruction) => {
+       
+        //On prend chaque élément du module
+        for(let key in instruction){
+            if(instruction[key]!=instruction.id_){
+                str+=`[${key} :  { ${instruction[key]} }] `;
+            }
+        } 
+        //Création du saut de la chaine
+        str+='<br>';
+    });
+    //On affiche les instructions du modules
+    logInfo(str);
+
+
 }
 
 /**
