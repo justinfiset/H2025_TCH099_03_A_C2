@@ -91,37 +91,102 @@ function sendCommand(input) {
  */
 async function getInstruction(matricule,module){
 try{
-    let url = `${urlPrefix}/api/v1/verify?matricule=${matricule}&module=${module}`
-    
+    let url = `${urlPrefix}/api/v1/verify?matricule=${matricule}&module=${module}`;
+
+
     //Permet de récupérer la réponse de l'api
     const response = await fetch(url);
     
     //Permet de récupérer les données
     const data = await response.json();
     //Permet d'afficher les instructions du module
+
+
     logInfo(data["description"]+"<br> Les instructions du module:");
 
-    let str ="";
-    
-    data.instructions.forEach((instruction) => {
-        //Création du saut de la chaine
-        str+='<br>';
-        //On prend chaque élément du module
-        for(let key in instruction){
-            if(instruction[key]!=instruction.id_){
-                str+=`[${key} : ${instruction[key]}]   `;
-            }
-        } 
-        
-    })
-    //On affiche les instructions du modules
-    logInfo(str);
 
+    //Création de la chaine 
+    let str =""; 
+
+    if(module==="PatPlay"){
+        patplayResponse(data,str);
+    }else{
+        moduleClassique(data,str);
+    }
 }catch(e){
     //Renvoie une erreur si le fetch n'a pas fonctionné
     logError("ERREUR SYSTÈME!!!!!<br>Nous n'avons pas pu récupérer les instructions demandées.<br> Veuillez réessayer.");
-    logError(e);
+    // TODO : À effacer avant de remettre au client, car la ligne suivante sert seulement pour le débogage.
+    logError(`Pour débug voici l'erreur système :<br> ${e}`);
 }
+}
+/**
+ * Fonction qui traite l'affichage des instructions des modules considérés comme "classique".
+ * 
+ * @param {any} data 
+ * @param {String} str
+ */
+function moduleClassique(data,str){
+   
+    
+    
+    data.instructions.forEach((instruction) => {
+        
+        //On prend chaque élément du module
+        for(let key in instruction){
+            if(instruction[key]!=instruction.id_){
+                str+=`<br>[${key} :  { ${instruction[key]} }]  <br> `;
+            }
+        } 
+        //Création du saut de la chaine
+        str+='<br>';
+    });
+
+    //On affiche les instructions du modules
+    logInfo(str);
+}
+
+/**
+ * Fonction qui permet de traiter les cas qui possède deux tableau d'instruction à l'intérieur du tableau en général.
+ * Cette fonction a été créé pour patplay principalement.
+ * 
+ * @param {any} data 
+ * @param {String} str
+ */
+function patplayResponse(data,str){
+
+
+    str += "#Première partie des instructions : <br>";
+
+    data.instructions1.forEach((instruction) => {
+        
+        //On prend chaque élément du module
+        for(let key in instruction){
+            if(instruction[key]!=instruction.id_){
+                str+=`<br>[${key} :  { ${instruction[key]} }]  <br> `;
+            }
+        } 
+        //Création du saut de la chaine
+        str+='<br>';
+    });
+
+    str+="<br>#Deuxième partie des instructions : <br>"
+
+    data.instructions2.forEach((instruction) => {
+       
+        //On prend chaque élément du module
+        for(let key in instruction){
+            if(instruction[key]!=instruction.id_){
+                str+=`<br>[${key} :  { ${instruction[key]} }]  <br> `;
+            }
+        } 
+        //Création du saut de la chaine
+        str+='<br>';
+    });
+    //On affiche les instructions du modules
+    logInfo(str);
+
+
 }
 
 /**
