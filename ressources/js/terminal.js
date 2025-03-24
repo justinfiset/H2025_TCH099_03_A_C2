@@ -63,7 +63,7 @@ function sendCommand(input) {
             logInfo(`Voici la liste des commandes disponibles : <br>
                 - HELP : Affiche la liste des commandes disponibles. <br>
                 - CLEAR : Efface le contenu de la console.<br>
-                - INSTRUCTION 'matricule' 'module' : Permet d'avoir les instructions.`);
+                - INSTRUCTION [matricule] [module] : Permet d'avoir les instructions pour résoudre un module donnée.`);
             break;
         case "CLEAR":
             clearTerminal();
@@ -163,9 +163,14 @@ function patplayResponse(data,str){
         
         //On prend chaque élément du module
         for(let key in instruction){
-            if(instruction[key]!=instruction.id_){
-                str+=`<br>[${key} :  { ${instruction[key]} }]  <br> `;
-            }
+
+            // TODO : Trouver un moyen que le if fonctionne pour que l'id ne soit pas visible lors d'une demande.
+            /*if(instruction[key]===instruction.carre||instruction[key]===instruction.cercle||
+                instruction[key]===instruction.triangle||instruction[key]===instruction.couleur||
+                instruction[key]===instruction.x){
+              */      
+                str+=`[${key} :  { ${instruction[key]} }]  `;
+            //}
         } 
         //Création du saut de la chaine
         str+='<br>';
@@ -178,7 +183,7 @@ function patplayResponse(data,str){
         //On prend chaque élément du module
         for(let key in instruction){
             if(instruction[key]!=instruction.id_){
-                str+=`<br>[${key} :  { ${instruction[key]} }]  <br> `;
+                str+=`[${key} :  { ${instruction[key]} }] `;
             }
         } 
         //Création du saut de la chaine
