@@ -101,7 +101,10 @@ try{
     const data = await response.json();
     //Permet d'afficher les instructions du module
 
-
+    //Lance une erreur si la description est indéfini.
+    if(data["description"]===undefined){
+        throw new Error("Aucune description");
+    }
     logInfo(data["description"]+"<br> Les instructions du module:");
 
 
