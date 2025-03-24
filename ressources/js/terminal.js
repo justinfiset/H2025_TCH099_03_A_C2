@@ -125,7 +125,6 @@ try{
 }
 /**
  * Fonction qui traite l'affichage des instructions des modules considérés comme "classique".
- * 
  * @param {any} data 
  * @param {String} str
  */
