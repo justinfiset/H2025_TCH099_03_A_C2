@@ -151,7 +151,6 @@ function moduleClassique(data,str){
 /**
  * Fonction qui permet de traiter les cas qui possède deux tableau d'instruction à l'intérieur du tableau en général.
  * Cette fonction a été créé pour patplay principalement.
- * 
  * @param {any} data 
  * @param {String} str
  */
