@@ -74,7 +74,7 @@ function sendCommand(input) {
                     getInstruction(words[1],words[2]);
                     
                 }else{
-                    logError("Input incomplet veuillez recommencer ou sinon entrer la commande 'HELP'.");
+                    logError("Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'.");
                 }
                 break;
         default:
