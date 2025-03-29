@@ -1,6 +1,8 @@
 let inputText = ""; // Le texte entré par l'utilisateur
 let inputPrefix = ""; // Le préfixe de l'entrée de l'utilisateur (texte non modifiable par l'utilisateur avant le curseur)
-let urlPrefix ='http://localhost:5000'
+let urlPrefix ='http://localhost:5000' //L'url dynamique
+window.isAdmin = false; // Savoir si c'est un utilisateur ou non qui est connecté c'est une variable pour savoir la connexion d'un admin
+window.username = "";//La variable super-globale qui permet de conserver le pseudo de l'admin
 /**
  * Évenement qui apelle la fonction d'initialisation du termianl lorsque le contenu de la page est chargé
  * On affiche aussi un message de bienvenue
@@ -93,25 +95,46 @@ function sendCommand(input) {
     }
 }
 
+/**
+ * Fonction qui permet à un administrateur de se connecter.
+ * @param {String} pseudo, Le nom d'utilisateur de l'administrateur
+ * @param {String} mdp , Le mot de passe de l'administrateur
+ */
 async function getConnect(pseudo,mdp) {
     
     try{
-
+        //On transforme en JSON les informations de l'admin
         let logInfo = JSON.stringify({
             pseudo: pseudo,
             mdp: mdp
         }) ;
 
+        //On prépare une url dynamique
         let url = `${urlPrefix}/api/v1/login`;
         
-        const user = await fetch(url,
+        //Permet de récupérer un user.
+        const response = await fetch(url,
             {method: "POST",
                 headers:{
-                    'Content-Type': 'application/json' // Spécifie que les données envoyées sont au format JSON
+                    'Content-Type': 'application/json'
                 },
              body: logInfo 
             }
-        )
+        );
+
+        const data = await response.json();
+
+        //Permet de vérifier que c'est bel et bien un admin qui essai de se connecter.
+        if(data["admin"]===undefined||data['admin']===false){
+            throw new Error("Erreur de connexion, veuillez réessayer.");
+        }
+
+        
+        //Permet de charger les variables super globales avec les paramètres utilisateur
+        window.isAdmin  = data["admin"];
+        window.username = data["pseudo"];
+
+
 
 
 
