@@ -63,7 +63,8 @@ function sendCommand(input) {
             logInfo(`Voici la liste des commandes disponibles : <br>
                 - HELP : Affiche la liste des commandes disponibles. <br>
                 - CLEAR : Efface le contenu de la console.<br>
-                - INSTRUCTION [matricule] [module] : Permet d'avoir les instructions pour résoudre un module donnée.`);
+                - INSTRUCTION [matricule] [module] : Permet d'avoir les instructions pour résoudre un module donnée.<br>
+                - CONNECT  [pseudo] [mot de passe] : Permet à un administrateur de se connecter. `);
             break;
         case "CLEAR":
             clearTerminal();
@@ -77,10 +78,54 @@ function sendCommand(input) {
                     logError("Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'.");
                 }
                 break;
+        case "CONNECT ":
+            if(words.length ==3){
+                getConnect(words[1],words[2]);
+                
+            }else{
+                logError("Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'.");
+            }
+
+                break;
         default:
             logError("Commande inconnue. Entrez 'HELP' pour plus d'information.");
             break;
     }
+}
+
+async function getConnect(pseudo,mdp) {
+    
+    try{
+
+        let logInfo = JSON.stringify({
+            pseudo: pseudo,
+            mdp: mdp
+        }) ;
+
+        let url = `${urlPrefix}/api/v1/login`;
+        
+        const user = await fetch(url,
+            {method: "POST",
+                headers:{
+                    'Content-Type': 'application/json' // Spécifie que les données envoyées sont au format JSON
+                },
+             body: logInfo 
+            }
+        )
+
+
+
+    }catch(e){
+
+        //Renvoie une erreur si le fetch n'a pas fonctionné
+    logError("ERREUR SYSTÈME!!!!!<br>Nous n'avons pas réussi à vous connecter.<br> Veuillez réessayer.");
+    // TODO : À effacer avant de remettre au client, car la ligne suivante sert seulement pour le débogage.
+    logError(`Pour débug voici l'erreur système :<br> ${e}`);
+
+
+    }
+    
+
 }
 
 
