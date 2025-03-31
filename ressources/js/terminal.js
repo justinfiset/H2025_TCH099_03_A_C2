@@ -1,8 +1,7 @@
 let inputText = ""; // Le texte entré par l'utilisateur
 let inputPrefix = ""; // Le préfixe de l'entrée de l'utilisateur (texte non modifiable par l'utilisateur avant le curseur)
 let urlPrefix ='http://localhost:5000' //L'url dynamique
-window.isAdmin = false; // Savoir si c'est un utilisateur ou non qui est connecté c'est une variable pour savoir la connexion d'un admin
-window.username = "";//La variable super-globale qui permet de conserver le pseudo de l'admin
+
 /**
  * Évenement qui apelle la fonction d'initialisation du termianl lorsque le contenu de la page est chargé
  * On affiche aussi un message de bienvenue
@@ -55,18 +54,32 @@ document.addEventListener("keydown", (e) => {
  * Fonction qui traite la commande entrée par l'utilisateur
  * @param {string} input, la commande entrée par l'utilisateur
  */
-function sendCommand(input) {
+async function sendCommand(input) {
     logInfo(inputPrefix + input);
 
     let words = input.split(' ');
     
     switch(words[0].toUpperCase()) {
         case "HELP":
-            logInfo(`Voici la liste des commandes disponibles : <br>
-                - HELP : Affiche la liste des commandes disponibles. <br>
-                - CLEAR : Efface le contenu de la console.<br>
-                - INSTRUCTION [matricule] [module] : Permet d'avoir les instructions pour résoudre un module donnée.<br>
-                - CONNECT  [pseudo] [mot de passe] : Permet à un administrateur de se connecter. `);
+            let isConnect = await verifCo(localStorage.getItem("token"));
+            
+            if(!isConnect){
+                logInfo(`WVoici la liste des commandes disponibles : <br>
+                    - HELP : Affiche la liste des commandes disponibles. <br>
+                    - CLEAR : Efface le contenu de la console.<br>
+                    - INSTRUCTION [matricule] [module] : Permet d'avoir les instructions pour résoudre un module donnée.<br>
+                    - CONNECT  [pseudo] [mot de passe] : Permet à un administrateur de se connecter. `);
+                    localStorage.clear();
+            }else{
+                logInfo(`Voici la liste des commandes disponibles : <br>
+                    - HELP : Affiche la liste des commandes disponibles. <br>
+                    - CLEAR : Efface le contenu de la console.<br>
+                    - INSTRUCTION [matricule] [module] : Permet d'avoir les instructions pour résoudre un module donnée.<br>
+                    - CONNECT  [pseudo] [mot de passe] : Permet à un administrateur de se connecter.<br>
+                    - CREE [pseudo] [mot de passe] : Permet à un administrateur de créer un administrateur.<br>
+                    - DECO : Permet à l'administrateur de se déconnecter. `);
+                    
+            }
             break;
         case "CLEAR":
             clearTerminal();
@@ -80,8 +93,10 @@ function sendCommand(input) {
                     logError("Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'.");
                 }
                 break;
-        case "CONNECT ":
-            if(words.length ==3){
+
+        case "CONNECT":
+               
+            if(words.length == 3){
                 getConnect(words[1],words[2]);
                 
             }else{
@@ -89,9 +104,59 @@ function sendCommand(input) {
             }
 
                 break;
+        case "CREE":
+
+            if(words.length == 3){
+                creeAdmin(words[1],words[2]);
+                
+            }else{
+                logError("Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'.");
+            }
+            break;
+            
+        case "DECO":
+            clearTerminal();
+            logInfo(`${localStorage.getItem("utilisateur")}, vous venez de vous déconnectez.<br>
+                    Passer bonne journée :).`);
+            localStorage.clear();
+            break;
         default:
             logError("Commande inconnue. Entrez 'HELP' pour plus d'information.");
             break;
+    }
+}
+
+async function verifCo(token){
+    try{
+
+    let url = `${urlPrefix}/api/v1/testDeConnexion`
+
+
+    const response= await fetch(url,
+        {method: "POST",
+            headers: {
+                "Content-Type": "application/json;charset=utf-8",
+              },
+         body:JSON.stringify({
+            token: `${token}`
+        }),
+        }
+    );
+
+    if(!response.ok)
+    {
+        return false;
+    }    
+    const data = await response.json();
+
+
+    if(data["test"]){
+        return true;
+    }else{
+        return false;
+    }
+    }catch(e){
+        return false;
     }
 }
 
@@ -103,24 +168,19 @@ function sendCommand(input) {
 async function getConnect(pseudo,mdp) {
     
     try{
-        //On transforme en JSON les informations de l'admin
-        let logInfo = JSON.stringify({
-            pseudo: pseudo,
-            mdp: mdp
-        }) ;
-
         //On prépare une url dynamique
         let url = `${urlPrefix}/api/v1/login`;
-        
         //Permet de récupérer un user.
         const response = await fetch(url,
-            {method: "POST",
-                headers:{
-                    'Content-Type': 'application/json'
-                },
-             body: logInfo 
-            }
-        );
+            {method: 'POST',
+                headers: {
+                    "Content-Type": "application/json;charset=utf-8",
+                  },
+             body:JSON.stringify({
+                pseudo: `${pseudo}`,
+                mdp: `${mdp}`
+            }),
+            });
 
         const data = await response.json();
 
@@ -131,10 +191,12 @@ async function getConnect(pseudo,mdp) {
 
         
         //Permet de charger les variables super globales avec les paramètres utilisateur
-        window.isAdmin  = data["admin"];
-        window.username = data["pseudo"];
+        localStorage.setItem("token",data["token"]);
+        localStorage.setItem("utilisateur",data["utilisateur"]);
 
-
+        logInfo(`Bienvenue administrateur ${localStorage.getItem("utilisateur")}, <br>
+             Utilisez la commande 'HELP' pour voir les commandes administratives que vous avez accès.
+             De plus, vous avez accès aux messages de débogage.`);
 
 
 
