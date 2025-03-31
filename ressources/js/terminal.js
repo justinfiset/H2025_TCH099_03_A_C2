@@ -64,7 +64,7 @@ async function sendCommand(input) {
             let isConnect = await verifCo(localStorage.getItem("token"));
             
             if(!isConnect){
-                logInfo(`WVoici la liste des commandes disponibles : <br>
+                logInfo(`Voici la liste des commandes disponibles : <br>
                     - HELP : Affiche la liste des commandes disponibles. <br>
                     - CLEAR : Efface le contenu de la console.<br>
                     - INSTRUCTION [matricule] [module] : Permet d'avoir les instructions pour résoudre un module donnée.<br>
@@ -143,10 +143,7 @@ async function verifCo(token){
         }
     );
 
-    if(!response.ok)
-    {
-        return false;
-    }    
+       
     const data = await response.json();
 
 
