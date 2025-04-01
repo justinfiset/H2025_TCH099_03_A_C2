@@ -58,10 +58,11 @@ async function sendCommand(input) {
     logInfo(inputPrefix + input);
 
     let words = input.split(' ');
-    
+    let isConnect = await verifCo(localStorage.getItem("token"));
+
     switch(words[0].toUpperCase()) {
         case "HELP":
-            let isConnect = await verifCo(localStorage.getItem("token"));
+            
             
             if(!isConnect){
                 logInfo(`Voici la liste des commandes disponibles : <br>
@@ -106,26 +107,52 @@ async function sendCommand(input) {
                 break;
         case "CREE":
 
-            if(words.length == 3){
-                creeAdmin(words[1],words[2]);
-                
+            
+            if(isConnect===true){
+                if(words.length == 3){
+                    creeAdmin(words[1],words[2]);
+                    
+                }else{
+                    logError("Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'.");
+                }
             }else{
-                logError("Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'.");
+                logError("Commande inconnue. Entrez 'HELP' pour plus d'information.");
             }
             break;
             
         case "DECO":
-            clearTerminal();
-            logInfo(`${localStorage.getItem("utilisateur")}, vous venez de vous déconnectez.<br>
-                    Passer bonne journée :).`);
-            localStorage.clear();
+
+            if(isConnect){
+                clearTerminal();
+                logInfo(`${localStorage.getItem("utilisateur")}, vous venez de vous déconnectez.<br>
+                        Passer bonne journée :).`);
+                localStorage.clear();
+            }else{
+                logError("Commande inconnue. Entrez 'HELP' pour plus d'information.");
+            }
             break;
+        case "BSP":
+            logInfo(`Bonjour,<br>
+                 Bienvenue dans le programme international de Bash Space Program. <br>
+                 Vous êtes actuellement sur le magnifique terminal de 14e génération.<br>
+                 Afin d'assurer le bon déroulement  de la mission, nous vous prions<br>
+                 de bien rester calme à toute les éventualités. Votre pays a besoin de <br>
+                 vos capacité pour que cette mission soit un grand succès. L'objectif que <br>
+                 vous avez est simple comme bonjour. Vous devez seulement communiquer<br>
+                 avec notre capitaine à bord de notre vaisseau.`);
+                break;
         default:
             logError("Commande inconnue. Entrez 'HELP' pour plus d'information.");
             break;
     }
 }
-
+/**
+ * Permet de vérifier si un token valide est présent ou non
+ * @param {String} token 
+ * @returns Retourne vrai si le token est valide 
+ * et retourne faux si le token est invalide ou il manque un token.
+ * 
+ */
 async function verifCo(token){
     try{
 
@@ -154,6 +181,48 @@ async function verifCo(token){
     }
     }catch(e){
         return false;
+    }
+}
+
+/**
+ * Permet de créé un admin si et seulement si  un administrateur est déjà connecté.
+ * @param {String} pseudo 
+ * @param {String} mdp 
+ */
+async function creeAdmin(pseudo,mdp){
+    try{
+
+         let url = `${urlPrefix}/api/v1/admin`;
+
+         const response = await fetch(url,{
+            method:`POST`,
+            headers: {
+                "Content-Type": "application/json;charset=utf-8",
+              },
+            body:JSON.stringify({
+                pseudo: `${pseudo}`,
+                mdp: `${mdp}`,
+                token: `${localStorage.getItem("token")}`
+            })
+         })
+
+         const data = await response.json();
+
+         if(data["message"]===undefined){
+            throw new Error("Échec de la création de compte. Modifier les identifiants et veuillez réessayer.");
+         }else{
+            logInfo("Le nouvel administrateur à bien été créé.");
+         }
+
+    }catch(e){
+         //Renvoie une erreur si le fetch n'a pas fonctionné
+    logError("ERREUR SYSTÈME!!!!!<br>Nous n'avons pas réussi à créer un compte administrateur.<br> Veuillez réessayer.");
+
+    let isConnect = await verifCo(localStorage.getItem("token"));
+
+    if(isConnect){
+        logError(`Pour débug voici l'erreur système :<br> ${e}`);
+    }
     }
 }
 
@@ -193,7 +262,7 @@ async function getConnect(pseudo,mdp) {
 
         logInfo(`Bienvenue administrateur ${localStorage.getItem("utilisateur")}, <br>
              Utilisez la commande 'HELP' pour voir les commandes administratives que vous avez accès.
-             De plus, vous avez accès aux messages de débogage.`);
+             <br>De plus, vous avez accès aux messages de débogage.`);
 
 
 
@@ -201,9 +270,12 @@ async function getConnect(pseudo,mdp) {
 
         //Renvoie une erreur si le fetch n'a pas fonctionné
     logError("ERREUR SYSTÈME!!!!!<br>Nous n'avons pas réussi à vous connecter.<br> Veuillez réessayer.");
-    // TODO : À effacer avant de remettre au client, car la ligne suivante sert seulement pour le débogage.
-    logError(`Pour débug voici l'erreur système :<br> ${e}`);
 
+    let isConnect = await verifCo(localStorage.getItem("token"));
+
+    if(isConnect){
+        logError(`Pour débug voici l'erreur système :<br> ${e}`);
+    }
 
     }
     
@@ -246,8 +318,12 @@ try{
 }catch(e){
     //Renvoie une erreur si le fetch n'a pas fonctionné
     logError("ERREUR SYSTÈME!!!!!<br>Nous n'avons pas pu récupérer les instructions demandées.<br> Veuillez réessayer.");
-    // TODO : À effacer avant de remettre au client, car la ligne suivante sert seulement pour le débogage.
-    logError(`Pour débug voici l'erreur système :<br> ${e}`);
+
+    let isConnect = await verifCo(localStorage.getItem("token"));
+
+    if(isConnect){
+        logError(`Pour débug voici l'erreur système :<br> ${e}`);
+    }
 }
 }
 /**
