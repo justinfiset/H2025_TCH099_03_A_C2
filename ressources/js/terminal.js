@@ -262,7 +262,7 @@ async function getConnect(pseudo,mdp) {
 
         logInfo(`Bienvenue administrateur ${localStorage.getItem("utilisateur")}, <br>
              Utilisez la commande 'HELP' pour voir les commandes administratives que vous avez accès.
-             De plus, vous avez accès aux messages de débogage.`);
+             <br>De plus, vous avez accès aux messages de débogage.`);
 
 
 
