@@ -302,7 +302,7 @@ async function getInstruction(matricule, module) {
         //Création de la chaine
         let str = "";
 
-        if (module === "PatPlay") {
+        if (module.toUpperCase() === "PATPLAY") {
             patplayResponse(data, str);
         } else {
             moduleClassique(data, str);
