@@ -15,6 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
     logError(
         "CECI EST UN TEST D'ERREUR À ENLEVER APRÈS LE CHARGEMENT DE LA PAGE"
     );
+
+    audioGestion();
 });
 
 /**
@@ -70,6 +72,7 @@ async function sendCommand(input) {
                     - HELP : Affiche la liste des commandes disponibles. <br>
                     - CLEAR : Efface le contenu de la console.<br>
                     - INSTRUCTION [matricule] [module] : Permet d'avoir les instructions pour résoudre un module donnée.<br>
+                    - REBOOT : Permet de relancer le terminal à son état initial.<br>
                     - CONNECT  [pseudo] [mot de passe] : Permet à un administrateur de se connecter. `);
                 localStorage.clear();
             } else {
@@ -77,6 +80,7 @@ async function sendCommand(input) {
                     - HELP : Affiche la liste des commandes disponibles. <br>
                     - CLEAR : Efface le contenu de la console.<br>
                     - INSTRUCTION [matricule] [module] : Permet d'avoir les instructions pour résoudre un module donnée.<br>
+                    - REBOOT : Permet de relancer le terminal à son état initial.<br>
                     - CONNECT  [pseudo] [mot de passe] : Permet à un administrateur de se connecter.<br>
                     - CREE [pseudo] [mot de passe] : Permet à un administrateur de créer un administrateur.<br>
                     - DECO : Permet à l'administrateur de se déconnecter. `);
@@ -89,7 +93,7 @@ async function sendCommand(input) {
             if (words.length == 3) {
                 getInstruction(words[1], words[2]);
             } else {
-                logError(
+                logWarning(
                     "Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'."
                 );
             }
@@ -98,7 +102,7 @@ async function sendCommand(input) {
             if (words.length == 3) {
                 getConnect(words[1], words[2]);
             } else {
-                logError(
+                logWarning(
                     "Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'."
                 );
             }
@@ -108,7 +112,7 @@ async function sendCommand(input) {
                 if (words.length == 3) {
                     creeAdmin(words[1], words[2]);
                 } else {
-                    logError(
+                    logWarning(
                         "Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'."
                     );
                 }
@@ -141,6 +145,9 @@ async function sendCommand(input) {
                  vos capacité pour que cette mission soit un grand succès. L'objectif que <br>
                  vous avez est simple comme bonjour. Vous devez seulement communiquer<br>
                  avec notre capitaine à bord de notre vaisseau.`);
+            break;
+        case "REBOOT":
+            location.reload();
             break;
         default:
             logError(
@@ -465,18 +472,19 @@ function logError(text) {
     log(text, "#FF1744");
 }
 
+/**
+ * Permet de gérer l'audio de l'application web
+ */
+function audioGestion() {
+    document.getElementById("sound").addEventListener("click", () => {
+        if (document.getElementById("sound").textContent === "volume_up") {
+            document.getElementById("sound").textContent = "volume_mute";
+            document.getElementById("audioContinu").pause();
+        } else {
+            document.getElementById("sound").textContent = "volume_up";
+            document.getElementById("audioContinu").play();
+        }
+    });
 
-document.getElementById("sound").addEventListener("click", (e) => {
-    if(document.getElementById("sound").textContent==="volume_up"){
-        document.getElementById("sound").textContent = "volume_mute";
-        document.getElementById("audioContinu").pause();
-    }else{
-        document.getElementById("sound").textContent = "volume_up";
-        document.getElementById("audioContinu").play();
-    }
-    
-});
-
-await window.onload(
-    document.getElementById("audioContinu").play()
-);
+    window.onload(document.getElementById("audioContinu").play());
+}
