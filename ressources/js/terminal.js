@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     logInfo(
         "<b>Bienvenue sur le panneau de contrôle de la Bash Space Program Agency.</b>"
     );
-    logWarning("Entrez la commande 'HELP' pour plus d'information.");
+    logWarning("Entrez la commande 'HELP' pour plus d'informations.");
     logError(
         "CECI EST UN TEST D'ERREUR À ENLEVER APRÈS LE CHARGEMENT DE LA PAGE"
     );
@@ -93,7 +93,7 @@ async function sendCommand(input) {
             if (words.length == 3) {
                 getInstruction(words[1], words[2]);
             } else {
-                logWarning(
+                logError(
                     "Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'."
                 );
             }
@@ -102,7 +102,7 @@ async function sendCommand(input) {
             if (words.length == 3) {
                 getConnect(words[1], words[2]);
             } else {
-                logWarning(
+                logError(
                     "Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'."
                 );
             }
@@ -112,13 +112,13 @@ async function sendCommand(input) {
                 if (words.length == 3) {
                     creeAdmin(words[1], words[2]);
                 } else {
-                    logWarning(
+                    logError(
                         "Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'."
                     );
                 }
             } else {
                 logError(
-                    "Commande inconnue. Entrez 'HELP' pour plus d'information."
+                    "Commande inconnue. Entrez 'HELP' pour plus d'informations."
                 );
             }
             break;
@@ -127,12 +127,12 @@ async function sendCommand(input) {
                 clearTerminal();
                 logInfo(`${localStorage.getItem(
                     "utilisateur"
-                )}, vous venez de vous déconnectez.<br>
-                        Passer bonne journée :).`);
+                )}, vous venez de vous déconnecter.<br>
+                        Passez bonne journée :).`);
                 localStorage.clear();
             } else {
                 logError(
-                    "Commande inconnue. Entrez 'HELP' pour plus d'information."
+                    "Commande inconnue. Entrez 'HELP' pour plus d'informations."
                 );
             }
             break;
@@ -151,7 +151,7 @@ async function sendCommand(input) {
             break;
         default:
             logError(
-                "Commande inconnue. Entrez 'HELP' pour plus d'information."
+                "Commande inconnue. Entrez 'HELP' pour plus d'informations."
             );
             break;
     }
