@@ -12,10 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "<b>Bienvenue sur le panneau de contrôle de la Bash Space Program Agency.</b>"
     );
     logWarning("Entrez la commande 'HELP' pour plus d'informations.");
-    logError(
-        "CECI EST UN TEST D'ERREUR À ENLEVER APRÈS LE CHARGEMENT DE LA PAGE"
-    );
-
+    testApi();
     audioGestion();
 });
 
@@ -26,7 +23,16 @@ document.addEventListener("DOMContentLoaded", () => {
 function initTerminal() {
     inputPrefix = document.getElementById("terminal-input-prefix").textContent;
 }
-
+/**
+ * Permet de tester si l'api est en ligne.
+ */
+async function testApi() {
+    if (!(await verifAPI())) {
+        logError(
+            "ERREUR DE CONNEXION AU SERVEUR. VEUILLEZ REESSAYER PLUS TARD."
+        );
+    }
+}
 /**
  * Évenement qui écoute les touches du clavier pour permettre à l'utilisateur d'interagir avec le terminal
  * On gère les touches suivantes :
@@ -62,82 +68,83 @@ document.addEventListener("keydown", (e) => {
 async function sendCommand(input) {
     logInfo(inputPrefix + input);
 
-    let words = input.split(" ");
-    let isConnect = await verifCo(localStorage.getItem("token"));
+    if (await verifAPI()) {
+        let words = input.split(" ");
+        let isConnect = await verifCo(localStorage.getItem("token"));
 
-    switch (words[0].toUpperCase()) {
-        case "HELP":
-            if (!isConnect) {
-                logInfo(`Voici la liste des commandes disponibles : <br>
+        switch (words[0].toUpperCase()) {
+            case "HELP":
+                if (!isConnect) {
+                    logInfo(`Voici la liste des commandes disponibles : <br>
                     - HELP : Affiche la liste des commandes disponibles. <br>
                     - CLEAR : Efface le contenu de la console.<br>
                     - INSTRUCTION [matricule] [module] : Permet d'avoir les instructions pour résoudre un module donnée.<br>
                     - REBOOT : Permet de relancer le terminal à son état initial.<br>
                     - CONNECT  [pseudo] [mot de passe] : Permet à un administrateur de se connecter. `);
-                localStorage.clear();
-            } else {
-                logInfo(`Voici la liste des commandes disponibles : <br>
+                    localStorage.clear();
+                } else {
+                    logInfo(`Voici la liste des commandes disponibles : <br>
                     - HELP : Affiche la liste des commandes disponibles. <br>
                     - CLEAR : Efface le contenu de la console.<br>
                     - INSTRUCTION [matricule] [module] : Permet d'avoir les instructions pour résoudre un module donnée.<br>
                     - REBOOT : Permet de relancer le terminal à son état initial.<br>
                     - CONNECT  [pseudo] [mot de passe] : Permet à un administrateur de se connecter.<br>
-                    - CREE [pseudo] [mot de passe] : Permet à un administrateur de créer un administrateur.<br>
+                    - CREER [pseudo] [mot de passe] : Permet à un administrateur de créer un administrateur.<br>
                     - DECO : Permet à l'administrateur de se déconnecter. `);
-            }
-            break;
-        case "CLEAR":
-            clearTerminal();
-            break;
-        case "INSTRUCTION":
-            if (words.length == 3) {
-                getInstruction(words[1], words[2]);
-            } else {
-                logError(
-                    "Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'."
-                );
-            }
-            break;
-        case "CONNECT":
-            if (words.length == 3) {
-                getConnect(words[1], words[2]);
-            } else {
-                logError(
-                    "Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'."
-                );
-            }
-            break;
-        case "CREE":
-            if (isConnect === true) {
+                }
+                break;
+            case "CLEAR":
+                clearTerminal();
+                break;
+            case "INSTRUCTION":
                 if (words.length == 3) {
-                    creeAdmin(words[1], words[2]);
+                    getInstruction(words[1], words[2]);
                 } else {
                     logError(
                         "Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'."
                     );
                 }
-            } else {
-                logError(
-                    "Commande inconnue. Entrez 'HELP' pour plus d'informations."
-                );
-            }
-            break;
-        case "DECO":
-            if (isConnect) {
-                clearTerminal();
-                logInfo(`${localStorage.getItem(
-                    "utilisateur"
-                )}, vous venez de vous déconnecter.<br>
+                break;
+            case "CONNECT":
+                if (words.length == 3) {
+                    getConnect(words[1], words[2]);
+                } else {
+                    logError(
+                        "Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'."
+                    );
+                }
+                break;
+            case "CREER":
+                if (isConnect === true) {
+                    if (words.length == 3) {
+                        creerAdmin(words[1], words[2]);
+                    } else {
+                        logError(
+                            "Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'."
+                        );
+                    }
+                } else {
+                    logError(
+                        "Commande inconnue. Entrez 'HELP' pour plus d'informations."
+                    );
+                }
+                break;
+            case "DECO":
+                if (isConnect) {
+                    clearTerminal();
+                    logInfo(`${localStorage.getItem(
+                        "utilisateur"
+                    )}, vous venez de vous déconnecter.<br>
                         Passez bonne journée :).`);
-                localStorage.clear();
-            } else {
-                logError(
-                    "Commande inconnue. Entrez 'HELP' pour plus d'informations."
-                );
-            }
-            break;
-        case "BSP":
-            logInfo(`Bonjour,<br>
+                    localStorage.clear();
+                } else {
+                    logError(
+                        "Commande inconnue. Entrez 'HELP' pour plus d'informations."
+                    );
+                }
+                break;
+            case "BSP":
+                logInfo(`Bonjour,<br>
                  Bienvenue dans le programme international de Bash Space Program. <br>
                  Vous êtes actuellement sur le magnifique terminal de 14e génération.<br>
                  Afin d'assurer le bon déroulement  de la mission, nous vous prions<br>
@@ -145,15 +152,36 @@ async function sendCommand(input) {
                  vos capacité pour que cette mission soit un grand succès. L'objectif que <br>
                  vous avez est simple comme bonjour. Vous devez seulement communiquer<br>
                  avec notre capitaine à bord de notre vaisseau.`);
-            break;
-        case "REBOOT":
-            location.reload();
-            break;
-        default:
-            logError(
-                "Commande inconnue. Entrez 'HELP' pour plus d'informations."
-            );
-            break;
+                break;
+            case "REBOOT":
+                location.reload();
+                break;
+            default:
+                logError(
+                    "Commande inconnue. Entrez 'HELP' pour plus d'informations."
+                );
+                break;
+        }
+    } else {
+        location.reload();
+    }
+}
+
+async function verifAPI() {
+    try {
+        let url = `${urlPrefix}/api/v1`;
+
+        const response = await fetch(url);
+
+        const data = await response.json();
+
+        if (data["estConnecte"]) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch (e) {
+        return false;
     }
 }
 /**
@@ -194,7 +222,7 @@ async function verifCo(token) {
  * @param {String} pseudo
  * @param {String} mdp
  */
-async function creeAdmin(pseudo, mdp) {
+async function creerAdmin(pseudo, mdp) {
     try {
         let url = `${urlPrefix}/api/v1/admin`;
 
