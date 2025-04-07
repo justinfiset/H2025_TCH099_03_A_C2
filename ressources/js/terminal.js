@@ -12,7 +12,9 @@ document.addEventListener("DOMContentLoaded", () => {
         "<b>Bienvenue sur le panneau de contrôle de la Bash Space Program Agency.</b>"
     );
     logWarning("Entrez la commande 'HELP' pour plus d'informations.");
+
     testApi();
+
     audioGestion();
 });
 
