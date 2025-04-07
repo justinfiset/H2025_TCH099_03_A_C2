@@ -485,6 +485,4 @@ function audioGestion() {
             document.getElementById("audioContinu").play();
         }
     });
-
-    window.onload(document.getElementById("audioContinu").play());
 }
