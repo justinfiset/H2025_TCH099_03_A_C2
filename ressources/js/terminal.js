@@ -17,10 +17,68 @@ document.addEventListener("DOMContentLoaded", () => {
 
     audioGestion();
 
-    setInterval(()=>{
-        logInfo("test");
-    },Math.random()*120000);
+    setInterval(() => {
+        creerMalus();
+    }, Math.random() * 120000);
 });
+/**
+ * Cette fonction fonctionne en aléatoire pour fournir au joueur un malus au bout de maximum 2 minutes de jeu.
+ */
+function creerMalus() {
+    switch (Math.floor(Math.random() * 3)) {
+        case 1:
+            logInfo("Test de connaissance !");
+            capchat();
+            break;
+        case 2:
+            logInfo("Un capchat !");
+            break;
+        case 0:
+            logInfo("Une fenêtre pop-up !");
+            popUp();
+            break;
+    }
+}
+/**
+ * Permet de sélectionner un pop-up à afficher.
+ */
+function popUp() {
+    switch (Math.floor(Math.random() * 10) + 1) { // Génère un nombre entre 1 et 10
+        case 1:
+            window.open("http://heeeeeeeey.com/", "_blank");
+            break;
+        case 2:
+            window.open("http://www.patience-is-a-virtue.org/", "_blank");
+            break;
+        case 3:
+            window.open("http://www.pointerpointer.com/", "_blank");
+            break;
+        case 4:
+            window.open("http://www.staggeringbeauty.com/", "_blank");
+            break;
+        case 5:
+            window.open("https://neal.fun/deep-sea/", "_blank");
+            break;
+        case 6:
+            window.open("http://www.fallingfalling.com/", "_blank");
+            break;
+        case 7:
+            window.open("http://www.ouais-ouais-ouais.com/", "_blank");
+            break;
+        case 8:
+            window.open("http://www.trypap.com/", "_blank");
+            break;
+        case 9:
+            window.open("http://www.republiquedesmangues.fr/", "_blank");
+            break;
+        case 10:
+            window.open("http://www.dontclick.it/", "_blank");
+            break;
+        default:
+            console.log("Erreur : aucun lien sélectionné.");
+            break;
+    }
+}
 
 /**
  * Fonction d'initialisation du terminal
