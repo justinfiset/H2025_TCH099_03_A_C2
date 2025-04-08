@@ -45,6 +45,10 @@ p {
     font-size: 1.2 rem;
 }
 
+#horloge{
+    margin: 0 10.95em 0 0 !important;
+}
+
 #sound{
     cursor: pointer;
 }
