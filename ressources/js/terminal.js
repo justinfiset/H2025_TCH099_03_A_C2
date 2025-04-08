@@ -1,6 +1,7 @@
 let inputText = ""; // Le texte entré par l'utilisateur
 let inputPrefix = ""; // Le préfixe de l'entrée de l'utilisateur (texte non modifiable par l'utilisateur avant le curseur)
 let urlPrefix = "http://localhost:5000"; //L'url dynamique
+let urlInterne = "http://localhost:9000/internalServer"; //L'url dynamique interne
 /**
  * Évenement qui apelle la fonction d'initialisation du termianl lorsque le contenu de la page est chargé
  * On affiche aussi un message de bienvenue
@@ -20,18 +21,20 @@ document.addEventListener("DOMContentLoaded", () => {
     setInterval(() => {
         creerMalus();
     }, Math.random() * 120000);
+    //Math.random() * 120000
 });
 /**
  * Cette fonction fonctionne en aléatoire pour fournir au joueur un malus au bout de maximum 2 minutes de jeu.
  */
-function creerMalus() {
+async function creerMalus() {
     switch (Math.floor(Math.random() * 3)) {
         case 1:
             logInfo("Test de connaissance !");
-            capchat();
+            testDeConnaissance();
             break;
         case 2:
-            logInfo("Un capchat !");
+            logInfo("Un captcha !");
+            await captcha();
             break;
         case 0:
             logInfo("Une fenêtre pop-up !");
@@ -40,10 +43,22 @@ function creerMalus() {
     }
 }
 /**
+ * Permet de générer le captcha comme malus
+ */
+async function captcha() {
+    let str = Math.random().toString(36).substring(2, 7);
+    logInfo(`Veuillez maintenant inscrire la commande RESULT ${str}.`);
+
+    await envoyerReponse(str);
+}
+
+/**
  * Permet de sélectionner un pop-up à afficher.
  */
 function popUp() {
-    switch (Math.floor(Math.random() * 10) + 1) { // Génère un nombre entre 1 et 10
+    switch (
+        Math.floor(Math.random() * 10) + 1 // Génère un nombre entre 1 et 10
+    ) {
         case 1:
             window.open("http://heeeeeeeey.com/", "_blank");
             break;
@@ -74,9 +89,35 @@ function popUp() {
         case 10:
             window.open("http://www.dontclick.it/", "_blank");
             break;
-        default:
-            console.log("Erreur : aucun lien sélectionné.");
-            break;
+    }
+}
+/**
+ * Permet d'envoyer dans le serveur interne la réponse d'un malus X.
+ * @param {any} reponse La réponse du malus
+ */
+async function envoyerReponse(reponse) {
+    let url = `${urlInterne}/reponse.php`;
+
+    console.log(url);
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json;charset=utf-8",
+            },
+            body: JSON.stringify({ reponse: reponse }),
+        });
+
+        const data = await response.json();
+
+        if (data["malus"] == null) {
+            throw new e("La variable est déjà instancié");
+        }
+    } catch (e) {
+        logError(`Erreur d'envoie de la réponse`);
+        //if (await verifCo(localStorage.getItem("token"))) {
+        logError(`Pour débug voici l'erreur système :<br> ${e}`);
+        // }
     }
 }
 

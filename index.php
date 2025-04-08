@@ -1,6 +1,6 @@
 <?php
 
-session_start();
+require("./config.php");
 
 
 $date = new DateTime('now', new DateTimeZone('America/New_York'));
