@@ -1,3 +1,4 @@
+
 <?php
 
 session_start();
@@ -10,6 +11,7 @@ $_SESSION["time"] =$dateLocale;
 
 ?>
 
+
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -19,7 +21,9 @@ $_SESSION["time"] =$dateLocale;
         <link rel="stylesheet" href="./ressources/css/normalize.css">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
             rel="stylesheet" />
+
         <link rel="stylesheet" href="./ressources/css/global.css?id=1">
+
 
         <script type="module" src="./ressources/js/terminal.js"></script>
     </head>
