@@ -1,7 +1,6 @@
 
 <?php
 
-session_start();
 $date = new DateTime('now', new DateTimeZone('America/New_York'));
 
 
