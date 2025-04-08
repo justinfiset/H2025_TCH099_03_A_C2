@@ -1,3 +1,15 @@
+<?php
+
+session_start();
+$date = new DateTime('now', new DateTimeZone('America/New_York'));
+
+
+$dateLocale = $date->format('Y-m-d');
+$_SESSION["time"] =$dateLocale;
+
+
+?>
+
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -15,6 +27,11 @@
         <div id="terminal-content">
             <div id="terminal-title">
                 <p>Bash Space Program</p>
+                <div id="horloge">
+                    <?php 
+                    echo $_SESSION["time"];
+                    ?>
+                </div>
                 <p id="sound" class="material-icons">volume_mute</p>
                 <audio id="audioContinu" loop preload="auto" src="./ressources/soundEffect/terminalBackgroundSound.mp3"></audio>
             </div>
