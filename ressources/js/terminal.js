@@ -16,6 +16,10 @@ document.addEventListener("DOMContentLoaded", () => {
     testApi();
 
     audioGestion();
+
+    setInterval(()=>{
+        logInfo("test");
+    },Math.random()*120000);
 });
 
 /**
