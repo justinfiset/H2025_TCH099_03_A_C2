@@ -4,7 +4,7 @@ session_start();
 $date = new DateTime('now', new DateTimeZone('America/New_York'));
 
 
-$dateLocale = $date->format('Y-m-d');
+$dateLocale = $date->format('d/m/Y');
 $_SESSION["time"] =$dateLocale;
 
 
@@ -19,7 +19,7 @@ $_SESSION["time"] =$dateLocale;
         <link rel="stylesheet" href="./ressources/css/normalize.css">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
             rel="stylesheet" />
-        <link rel="stylesheet" href="./ressources/css/global.css">
+        <link rel="stylesheet" href="./ressources/css/global.css?id=1">
 
         <script type="module" src="./ressources/js/terminal.js"></script>
     </head>
