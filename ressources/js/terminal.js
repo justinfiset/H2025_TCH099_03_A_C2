@@ -111,7 +111,7 @@ async function envoyerReponse(reponse) {
         const data = await response.json();
 
         if (data["malus"] == null) {
-            throw new e("La variable est déjà instancié");
+            throw new Error("La variable est déjà instancié");
         }
     } catch (e) {
         logError(`Erreur d'envoie de la réponse`);
