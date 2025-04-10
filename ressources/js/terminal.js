@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initTerminal();
 
     logInfo(
-        "<b>Bienvenue sur le panneau de contrôle de la Bash Space Program Agency.</b>"
+        "<p style='margin-top:0.5em;'>Bienvenue sur le panneau de contrôle de la Bash Space Program Agency.</p>"
     );
     logWarning("Entrez la commande 'HELP' pour plus d'informations.");
 
@@ -60,34 +60,34 @@ function popUp() {
         Math.floor(Math.random() * 10) + 1 // Génère un nombre entre 1 et 10
     ) {
         case 1:
-            window.open("http://heeeeeeeey.com/", "_blank");
+            window.open("https://mars.nasa.gov/", "_blank");
             break;
         case 2:
-            window.open("http://www.patience-is-a-virtue.org/", "_blank");
+            window.open("https://www.esa.int/", "_blank");
             break;
         case 3:
-            window.open("http://www.pointerpointer.com/", "_blank");
+            window.open("https://hubblesite.org/", "_blank");
             break;
         case 4:
-            window.open("http://www.staggeringbeauty.com/", "_blank");
+            window.open("https://www.spacex.com/", "_blank");
             break;
         case 5:
-            window.open("https://neal.fun/deep-sea/", "_blank");
+            window.open("https://www.nationalgeographic.com/science/space/", "_blank");
             break;
         case 6:
-            window.open("http://www.fallingfalling.com/", "_blank");
+            window.open("https://astrobiology.nasa.gov/", "_blank");
             break;
         case 7:
-            window.open("http://www.ouais-ouais-ouais.com/", "_blank");
+            window.open("https://www.planetariummontreal.com/", "_blank");
             break;
         case 8:
-            window.open("http://www.trypap.com/", "_blank");
+            window.open("https://www.planetary.org/", "_blank");
             break;
         case 9:
-            window.open("http://www.republiquedesmangues.fr/", "_blank");
+            window.open("https://chandra.harvard.edu/", "_blank");
             break;
         case 10:
-            window.open("http://www.dontclick.it/", "_blank");
+            window.open("https://www.cfa.harvard.edu/", "_blank");
             break;
     }
 }
