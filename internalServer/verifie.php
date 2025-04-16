@@ -18,7 +18,7 @@ try {
 
 } catch (Exception $e) {
     http_response_code(404);
-    echo json_encode(["erreur" => "Impossible de vérifier la variable"]);
+    echo json_encode(["erreur" => "Impossible de remplir la variable"]);
 }
 
 ?>

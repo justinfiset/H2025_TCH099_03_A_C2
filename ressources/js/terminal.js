@@ -24,12 +24,12 @@ document.addEventListener("DOMContentLoaded", () => {
  * Permet de gérer les malus
  */
 async function malusEtCo() {
-    let malus =  await malusEnCours();
-    if (!malus) {
+    let malus = await malusEnCours();
+    //if (!malus) {
         setInterval(() => {
             creerMalus();
-        }, Math.random() * 120000);
-    }
+        }, 10000);
+    //}
     //Math.random() * 120000
 }
 
@@ -59,11 +59,11 @@ async function creerMalus() {
  * Permet de vérifier l'efficacité de l'individu en arithmétique. Un malus quoi.
  */
 async function testDeConnaissance() {
-    const a = Math.floor(Math.random * 100) + 1;
-    const b = Math.floor(Math.random * 100) + 1;
-    const reponse =0;
-
-    switch (Math.floor(Math.random() * 4) + 1) {
+    const a = Math.floor(Math.random() * 15) + 1;
+    const b = Math.floor(Math.random() * 15) + 1;
+    const reponse = 0;
+   
+    switch (Math.floor(Math.random() * 2) + 1) {
         case 1:
             logWarning(
                 `Résolver cette équation ${a}+${b}. Inscriver RESULT [votreRéponse]`
@@ -78,15 +78,14 @@ async function testDeConnaissance() {
             break;
         case 3:
             logWarning(
-                `Résolver cette équation ${a}/${b}. Inscriver RESULT [votreRéponse]`
-            );
-            reponse = a / b;
-            break;
-        case 4:
-            logWarning(
                 `Résolver cette équation ${a}%${b}. Inscriver RESULT [votreRéponse]`
             );
             reponse = a % b;
+        case 4:
+            logWarning(
+                `Résolver cette équation ${a}-${b}. Inscriver RESULT [votreRéponse]`
+            );
+            reponse = a-b;
             break;
     }
     await envoyerReponse(reponse);
@@ -218,7 +217,6 @@ async function malusEnCours() {
             return false;
         }
     } catch (e) {
-        
         logError(`Pour débug voici l'erreur système :<br> ${e}`);
         return false;
     }
@@ -279,8 +277,8 @@ async function sendCommand(input) {
     if (await verifAPI()) {
         let words = input.split(" ");
         let isConnect = await verifCo(localStorage.getItem("token"));
-        let malus =  await malusEnCours();
-        if (malus) {
+        let malus = await malusEnCours();
+       // if (malus) {
             switch (words[0].toUpperCase()) {
                 case "HELP":
                     if (!isConnect) {
@@ -371,7 +369,7 @@ async function sendCommand(input) {
                     );
                     break;
             }
-        } else {
+       // } else {
             if (words[0].toUpperCase() == "RESULT") {
                 const result = await verifReponse(words[1]);
                 if (result) {
@@ -382,7 +380,7 @@ async function sendCommand(input) {
                     logError("Vous n'avez pas réussi. Veuillez réessayer.");
                 }
             }
-        }
+       // }
     } else {
         location.reload();
     }
