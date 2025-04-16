@@ -2,6 +2,7 @@ let inputText = ""; // Le texte entré par l'utilisateur
 let inputPrefix = ""; // Le préfixe de l'entrée de l'utilisateur (texte non modifiable par l'utilisateur avant le curseur)
 let urlPrefix = "http://localhost:5000"; //L'url dynamique
 let urlInterne = "http://localhost:9000/internalServer"; //L'url dynamique interne
+let malusActif = false;
 /**
  * Évenement qui apelle la fonction d'initialisation du termianl lorsque le contenu de la page est chargé
  * On affiche aussi un message de bienvenue
@@ -25,11 +26,11 @@ document.addEventListener("DOMContentLoaded", () => {
  */
 async function malusEtCo() {
     let malus = await malusEnCours();
-    //if (!malus) {
+    if (!malus) {
         setInterval(() => {
             creerMalus();
         }, 10000);
-    //}
+    }
     //Math.random() * 120000
 }
 
@@ -61,7 +62,7 @@ async function creerMalus() {
 async function testDeConnaissance() {
     const a = Math.floor(Math.random() * 15) + 1;
     const b = Math.floor(Math.random() * 15) + 1;
-    const reponse = 0;
+    let reponse = 0;
    
     switch (Math.floor(Math.random() * 2) + 1) {
         case 1:
@@ -211,11 +212,12 @@ async function malusEnCours() {
 
         const data = await response.json();
 
-        if (data["etat"]) {
-            return true;
+        if (data && data["etat"] !== undefined) {
+            return data["etat"]; // Retourne directement true ou false
         } else {
-            return false;
+            throw new Error("Structure de réponse inattendue");
         }
+
     } catch (e) {
         logError(`Pour débug voici l'erreur système :<br> ${e}`);
         return false;
@@ -278,7 +280,7 @@ async function sendCommand(input) {
         let words = input.split(" ");
         let isConnect = await verifCo(localStorage.getItem("token"));
         let malus = await malusEnCours();
-       // if (malus) {
+        if (malus) {
             switch (words[0].toUpperCase()) {
                 case "HELP":
                     if (!isConnect) {
@@ -369,7 +371,7 @@ async function sendCommand(input) {
                     );
                     break;
             }
-       // } else {
+        } else {
             if (words[0].toUpperCase() == "RESULT") {
                 const result = await verifReponse(words[1]);
                 if (result) {
@@ -380,7 +382,7 @@ async function sendCommand(input) {
                     logError("Vous n'avez pas réussi. Veuillez réessayer.");
                 }
             }
-       // }
+        }
     } else {
         location.reload();
     }
