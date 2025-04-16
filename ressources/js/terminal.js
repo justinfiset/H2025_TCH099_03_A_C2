@@ -2,7 +2,7 @@ let inputText = ""; // Le texte entré par l'utilisateur
 let inputPrefix = ""; // Le préfixe de l'entrée de l'utilisateur (texte non modifiable par l'utilisateur avant le curseur)
 let urlPrefix = "http://localhost:5000"; //L'url dynamique
 let urlInterne = "http://localhost:9000/internalServer"; //L'url dynamique interne
-let malusActif = false;
+let intervalId = null;
 /**
  * Évenement qui apelle la fonction d'initialisation du termianl lorsque le contenu de la page est chargé
  * On affiche aussi un message de bienvenue
@@ -25,13 +25,27 @@ document.addEventListener("DOMContentLoaded", () => {
  * Permet de gérer les malus
  */
 async function malusEtCo() {
-    let malus = await malusEnCours();
-    if (!malus) {
-        setInterval(() => {
-            creerMalus();
-        }, 10000);
+    try {
+        const malus = await malusEnCours();
+
+        if (!malus) {
+            // Si malus est false, démarre l'intervalle s'il n'est pas déjà actif
+            if (!intervalId) {
+                intervalId = setInterval(() => {
+                    creerMalus();
+                }, 1000);
+                //Math.random() * 120000
+            }
+        } else {
+            // Si malus est true, arrête l'intervalle s'il est actif
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null; // Réinitialise la variable
+            }
+        }
+    } catch (e) {
+        logError(`Erreur dans malusEtCo : ${e}`);
     }
-    //Math.random() * 120000
 }
 
 /**
@@ -62,8 +76,8 @@ async function creerMalus() {
 async function testDeConnaissance() {
     const a = Math.floor(Math.random() * 15) + 1;
     const b = Math.floor(Math.random() * 15) + 1;
-    let reponse = 0;
-   
+    const reponse = 0;
+
     switch (Math.floor(Math.random() * 2) + 1) {
         case 1:
             logWarning(
@@ -86,7 +100,7 @@ async function testDeConnaissance() {
             logWarning(
                 `Résolver cette équation ${a}-${b}. Inscriver RESULT [votreRéponse]`
             );
-            reponse = a-b;
+            reponse = a - b;
             break;
     }
     await envoyerReponse(reponse);
@@ -210,6 +224,10 @@ async function malusEnCours() {
     try {
         const response = await fetch(url);
 
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP : ${response.status}`);
+        }
+
         const data = await response.json();
 
         if (data && data["etat"] !== undefined) {
@@ -217,7 +235,6 @@ async function malusEnCours() {
         } else {
             throw new Error("Structure de réponse inattendue");
         }
-
     } catch (e) {
         logError(`Pour débug voici l'erreur système :<br> ${e}`);
         return false;

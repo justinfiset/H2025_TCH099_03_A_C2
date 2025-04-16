@@ -10,7 +10,7 @@ try {
     }
 
     if ($body["reponse"] == $_SESSION["reponse"]) {
-        $_SESSION["reponse"] = null;
+        unset($_SESSION["reponse"]);
         echo json_encode(["reponse" => true]);
     } else {
         echo json_encode(["reponse" => false]);

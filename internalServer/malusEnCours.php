@@ -2,8 +2,6 @@
 require("./../config.php");
 try {
 
-   
-
     if(isset($_SESSION["reponse"])){
         echo json_encode(["etat"=>true]);
         exit;
