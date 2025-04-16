@@ -33,6 +33,7 @@ async function malusEtCo() {
             if (!intervalId) {
                 intervalId = setInterval(() => {
                     creerMalus();
+                    logInfo("Plop");
                 }, 1000);
                 //Math.random() * 120000
             }
