@@ -114,6 +114,7 @@ async function testDeConnaissance() {
                 `Résolver cette équation ${a}%${b}. Inscriver RESULT [votreRéponse]`
             );
             reponse = a % b;
+            break;
         case 4:
             logWarning(
                 `Résolver cette équation ${a}-${b} en valeur absolue. Inscriver RESULT [votreRéponse]`
