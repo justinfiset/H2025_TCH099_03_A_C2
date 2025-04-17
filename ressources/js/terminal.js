@@ -92,11 +92,11 @@ async function creerMalus() {
  * Permet de vérifier l'efficacité de l'individu en arithmétique. Un malus quoi.
  */
 async function testDeConnaissance() {
-    const a = Math.floor(Math.random() * 15) + 1;
-    const b = Math.floor(Math.random() * 15) + 1;
+    const a = Math.floor(Math.random() * 12) + 1;
+    const b = Math.floor(Math.random() * 12) + 1;
     let reponse;
 
-    switch (Math.floor(Math.random() * 2) + 1) {
+    switch (Math.floor(Math.random() * 4) + 1) {
         case 1:
             logWarning(
                 `Résolver cette équation ${a}+${b}. Inscriver RESULT [votreRéponse]`
