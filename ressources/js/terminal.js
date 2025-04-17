@@ -116,9 +116,9 @@ async function testDeConnaissance() {
             reponse = a % b;
         case 4:
             logWarning(
-                `Résolver cette équation ${a}-${b}. Inscriver RESULT [votreRéponse]`
+                `Résolver cette équation ${a}-${b} en valeur absolue. Inscriver RESULT [votreRéponse]`
             );
-            reponse = a - b;
+            reponse = Math.abs(a - b);
             break;
     }
     await envoyerReponse(reponse);
