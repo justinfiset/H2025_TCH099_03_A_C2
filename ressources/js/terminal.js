@@ -3,6 +3,7 @@ let inputPrefix = ""; // Le préfixe de l'entrée de l'utilisateur (texte non mo
 let urlPrefix = "http://localhost:5000"; //L'url dynamique
 let urlInterne = "http://localhost:9000/internalServer"; //L'url dynamique interne
 let intervalId = null;
+let premiereFois =true;
 /**
  * Évenement qui apelle la fonction d'initialisation du termianl lorsque le contenu de la page est chargé
  * On affiche aussi un message de bienvenue
@@ -26,26 +27,37 @@ document.addEventListener("DOMContentLoaded", () => {
  */
 async function malusEtCo() {
     try {
-        const malus = await malusEnCours();
+        let malus = await malusEnCours();
+
+        if(premiereFois){
+            malus=false;
+            premiereFois=false;
+        }
+       logInfo(`État du malus : ${malus}`);
 
         if (!malus) {
-            // Si malus est false, démarre l'intervalle s'il n'est pas déjà actif
-            if (!intervalId) {
-                intervalId = setInterval(() => {
-                    creerMalus();
-                    logInfo("Plop");
-                }, 1000);
-                //Math.random() * 120000
-            }
+            demarrerIntervalle(); // Démarrer l'intervalle si nécessaire
         } else {
-            // Si malus est true, arrête l'intervalle s'il est actif
-            if (intervalId) {
-                clearInterval(intervalId);
-                intervalId = null; // Réinitialise la variable
-            }
+            arreterIntervalle(); // Arrêter l'intervalle si nécessaire
         }
     } catch (e) {
         logError(`Erreur dans malusEtCo : ${e}`);
+    }
+}
+
+// Fonctions de gestion de l'intervalle
+function demarrerIntervalle() {
+    if (!intervalId) {
+        console.log("Démarrage de l'intervalle...");
+        intervalId = setInterval(creerMalus(), 10000);
+    }
+}
+
+function arreterIntervalle() {
+    if (intervalId) {
+        console.log("Arrêt de l'intervalle...");
+        clearInterval(intervalId);
+        intervalId = null;
     }
 }
 
@@ -104,6 +116,7 @@ async function testDeConnaissance() {
             reponse = a - b;
             break;
     }
+    logInfo(reponse +" Test");
     await envoyerReponse(reponse);
 }
 
@@ -158,6 +171,7 @@ function popUp() {
             window.open("https://www.cfa.harvard.edu/", "_blank");
             break;
     }
+    premiereFois=false;
 }
 /**
  * Permet d'envoyer dans le serveur interne la réponse d'un malus X.
@@ -207,6 +221,7 @@ async function verifReponse(reponse) {
         const data = await response.json();
 
         if (data["reponse"]) {
+            premiereFois=false;
             return true;
         } else {
             return false;
@@ -298,7 +313,7 @@ async function sendCommand(input) {
         let words = input.split(" ");
         let isConnect = await verifCo(localStorage.getItem("token"));
         let malus = await malusEnCours();
-        if (malus) {
+        if (!malus) {
             switch (words[0].toUpperCase()) {
                 case "HELP":
                     if (!isConnect) {
