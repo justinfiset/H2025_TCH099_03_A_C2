@@ -383,6 +383,7 @@ async function sendCommand(input) {
                         )}, vous venez de vous déconnecter.<br>
                         Passez bonne journée :).`);
                         localStorage.clear();
+                        demarrerIntervalle();
                     } else {
                         logError(
                             "Commande inconnue. Entrez 'HELP' pour plus d'informations."
@@ -560,6 +561,7 @@ async function getConnect(pseudo, mdp) {
         )}, <br>
              Utilisez la commande 'HELP' pour voir les commandes administratives que vous avez accès.
              <br>De plus, vous avez accès aux messages de débogage.`);
+             arreterIntervalle();
     } catch (e) {
         //Renvoie une erreur si le fetch n'a pas fonctionné
         logError(
