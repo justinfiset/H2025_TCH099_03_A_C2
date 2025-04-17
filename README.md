@@ -50,6 +50,10 @@
     3. Ouvrez le projet Unity avec l’éditeur ou utilisez le build précompilé dans *BSP.zip*.
     4. Appuyez sur Play pour tester en local.
 
+    ### Installation du client web
+    
+    1.Installez docker
+
 ---
 -   ##  Structure du projet
 

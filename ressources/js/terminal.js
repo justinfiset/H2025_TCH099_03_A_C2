@@ -49,7 +49,7 @@ async function malusEtCo() {
 // Fonctions de gestion de l'intervalle
 function demarrerIntervalle() {
     if (!intervalId) {
-        console.log("Démarrage de l'intervalle...");
+        
         intervalId = setInterval(()=>{
             creerMalus();
         }, Math.floor(Math.random() * (max - min + 1)) + min);
@@ -58,7 +58,7 @@ function demarrerIntervalle() {
 
 function arreterIntervalle() {
     if (intervalId) {
-        console.log("Arrêt de l'intervalle...");
+        
         clearInterval(intervalId);
         intervalId = null;
     }
