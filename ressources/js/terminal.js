@@ -2,8 +2,10 @@ let inputText = ""; // Le texte entré par l'utilisateur
 let inputPrefix = ""; // Le préfixe de l'entrée de l'utilisateur (texte non modifiable par l'utilisateur avant le curseur)
 let urlPrefix = "http://localhost:5000"; //L'url dynamique
 let urlInterne = "http://localhost:9000/internalServer"; //L'url dynamique interne
-let intervalId = null;
-let premiereFois =true;
+let intervalId = null;//Pour initialisé l'interval
+let premiereFois =true;//Pour savoir si c'est la première fois que la page à été reload
+let max= 120000; //Temps maximum avant d'avoir un malus
+let min=  30000; //Temps minimum avant d'avoir un malus
 /**
  * Évenement qui apelle la fonction d'initialisation du termianl lorsque le contenu de la page est chargé
  * On affiche aussi un message de bienvenue
@@ -33,7 +35,6 @@ async function malusEtCo() {
             malus=false;
             premiereFois=false;
         }
-       logInfo(`État du malus : ${malus}`);
 
         if (!malus) {
             demarrerIntervalle(); // Démarrer l'intervalle si nécessaire
@@ -49,7 +50,9 @@ async function malusEtCo() {
 function demarrerIntervalle() {
     if (!intervalId) {
         console.log("Démarrage de l'intervalle...");
-        intervalId = setInterval(creerMalus(), 10000);
+        intervalId = setInterval(()=>{
+            creerMalus();
+        }, Math.floor(Math.random() * (max - min + 1)) + min);
     }
 }
 
@@ -69,11 +72,13 @@ async function creerMalus() {
         case 1:
             clearTerminal();
             logWarning("Test de connaissance !");
+            arreterIntervalle();
             testDeConnaissance();
             break;
         case 2:
             clearTerminal();
             logWarning("Un captcha !");
+            arreterIntervalle();
             await captcha();
             break;
         case 0:
@@ -170,7 +175,7 @@ function popUp() {
             window.open("https://www.cfa.harvard.edu/", "_blank");
             break;
     }
-    premiereFois=false;
+    window.reload();
 }
 /**
  * Permet d'envoyer dans le serveur interne la réponse d'un malus X.
@@ -220,7 +225,7 @@ async function verifReponse(reponse) {
         const data = await response.json();
 
         if (data["reponse"]) {
-            premiereFois=false;
+           
             return true;
         } else {
             return false;
@@ -407,12 +412,16 @@ async function sendCommand(input) {
             if (words[0].toUpperCase() == "RESULT") {
                 const result = await verifReponse(words[1]);
                 if (result) {
+                    location.reload();
                     logWarning(
                         "Vous pouvez dès maintenant retourner dans vos anciennes occupations."
                     );
+                    
                 } else {
                     logError("Vous n'avez pas réussi. Veuillez réessayer.");
                 }
+            }else{
+                logError("Commande inconnue. Veuillez réessayer.");
             }
         }
     } else {
