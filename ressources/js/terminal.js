@@ -89,7 +89,7 @@ async function creerMalus() {
 async function testDeConnaissance() {
     const a = Math.floor(Math.random() * 15) + 1;
     const b = Math.floor(Math.random() * 15) + 1;
-    const reponse = 0;
+    let reponse;
 
     switch (Math.floor(Math.random() * 2) + 1) {
         case 1:
@@ -116,7 +116,6 @@ async function testDeConnaissance() {
             reponse = a - b;
             break;
     }
-    logInfo(reponse +" Test");
     await envoyerReponse(reponse);
 }
 
