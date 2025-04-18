@@ -62,11 +62,11 @@
         - Ouvrir le client web automatiquement dans votre navigateur à l'adresse `http://localhost:9000`.
     5. Fermez la page du client web, puis exécutez le fichier `stop` pour arrêter les conteneurs Docker.
 
-**Remarque** : Sous Linux/MacOS, rendez les scripts exécutables avec :
-```bash
-chmod +x start stop
-```  
-
+    **Remarque<sub>1</sub>** : Sous Linux/MacOS, rendez les scripts exécutables avec :
+    ```bash
+    chmod +x start stop
+    ```  
+    **Remarque<sub>2</sub>** : Veuillez autoriser les pop-ups pour avoir l'expérience totale du client web.
 ---
 -   ##  Structure du projet
 
