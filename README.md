@@ -50,9 +50,22 @@
     3. Ouvrez le projet Unity avec l’éditeur ou utilisez le build précompilé dans *BSP.zip*.
     4. Appuyez sur Play pour tester en local.
 
-    ### Installation du client web
+    ### Guide d'installation du client web après clonage du dépôt
     
-    1.Installez docker
+    1. Installez Docker Desktop en suivant les instructions ici : [Docker](https://docs.docker.com/get-started/introduction/get-docker-desktop/).
+    2. Clonez ce dépôt sur votre machine locale et ouvrez le dossier contenant les fichiers.
+    3. Selon votre système d'exploitation, accédez au répertoire :
+        - [Windows](./Windows/)
+        - [Linux](./Linux/)
+    4. Exécutez le fichier `start` pour :
+        - Construire et lancer les conteneurs Docker.
+        - Ouvrir le client web automatiquement dans votre navigateur à l'adresse `http://localhost:9000`.
+    5. Fermez la page du client web, puis exécutez le fichier `stop` pour arrêter les conteneurs Docker.
+
+**Remarque** : Sous Linux/MacOS, rendez les scripts exécutables avec :
+```bash
+chmod +x start stop
+```  
 
 ---
 -   ##  Structure du projet
