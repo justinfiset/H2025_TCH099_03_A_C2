@@ -53,14 +53,15 @@
     ### Guide d'installation du client web après clonage du dépôt
     
     1. Installez Docker Desktop en suivant les instructions ici : [Docker](https://docs.docker.com/get-started/introduction/get-docker-desktop/).
-    2. Clonez ce dépôt sur votre machine locale et ouvrez le dossier contenant les fichiers.
-    3. Selon votre système d'exploitation, accédez au répertoire :
+    2. Ouvrez Docker et laissez-le en arrière-plan.
+    3. Clonez ce dépôt sur votre machine locale et ouvrez le dossier contenant les fichiers.
+    4. Selon votre système d'exploitation, accédez au répertoire :
         - [Windows](./Windows/)
         - [Linux](./Linux/)
-    4. Exécutez le fichier `start` pour :
+    5. Exécutez le fichier `start` pour :
         - Construire et lancer les conteneurs Docker.
         - Ouvrir le client web automatiquement dans votre navigateur à l'adresse `http://localhost:9000`.
-    5. Fermez la page du client web, puis exécutez le fichier `stop` pour arrêter les conteneurs Docker.
+    6. Fermez la page du client web, puis exécutez le fichier `stop` pour arrêter les conteneurs Docker.
 
     **Remarque<sub>1</sub>** : Sous Linux/MacOS, rendez les scripts exécutables avec :
     ```bash
