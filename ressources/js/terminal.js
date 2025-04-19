@@ -98,7 +98,8 @@ async function creerMalus() {
         case 0:
             clearTerminal();
             logWarning("Une fenêtre pop-up !");
-            popUp();
+            arreterIntervalle();
+            await popUp();
             break;
     }
 }
@@ -152,7 +153,7 @@ async function captcha() {
 /**
  * Permet de sélectionner un pop-up à afficher.
  */
-function popUp() {
+async function popUp() {
     switch (
         Math.floor(Math.random() * 10) + 1 // Génère un nombre entre 1 et 10
     ) {
@@ -190,6 +191,8 @@ function popUp() {
             window.open("https://www.cfa.harvard.edu/", "_blank");
             break;
     }
+    await envoyerReponse(41);
+    await verifReponse(41);
     window.reload();
 }
 /**
@@ -351,11 +354,15 @@ async function sendCommand(input) {
                 }
             } else {
                 logError(
-                    "Vous devez compléter le malus avant de pouvoir chercher des instructions."
+                    "Vous avez modifié la valeur locale. Attendez le prochain malus pour vous racheter."
                 );
             }
         } else if (mEc === "false" || mEc === null) {
+            if(malus){
             await commande(words, isConnect);
+            }else{
+                logWarning("Vous avez modifier la valeur local. Donc attendez au prochain malus pour vous rachetez.")
+            }
         } else {
             logError("Un erreur c'est produite.");
         }
