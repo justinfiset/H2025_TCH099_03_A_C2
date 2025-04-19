@@ -2,10 +2,11 @@ let inputText = ""; // Le texte entré par l'utilisateur
 let inputPrefix = ""; // Le préfixe de l'entrée de l'utilisateur (texte non modifiable par l'utilisateur avant le curseur)
 let urlPrefix = "http://localhost:5000"; //L'url dynamique
 let urlInterne = "http://localhost:9000/internalServer"; //L'url dynamique interne
-let intervalId = null;//Pour initialisé l'interval
-let premiereFois =true;//Pour savoir si c'est la première fois que la page à été reload
-let max= 120000; //Temps maximum avant d'avoir un malus
-let min=  30000; //Temps minimum avant d'avoir un malus
+let intervalId = null; //Pour initialisé l'interval
+let premiereFois = true; //Pour savoir si c'est la première fois que la page à été reload
+let max = 180000; //Temps maximum avant d'avoir un malus
+let min = 120000; //Temps minimum avant d'avoir un malus
+
 /**
  * Évenement qui apelle la fonction d'initialisation du termianl lorsque le contenu de la page est chargé
  * On affiche aussi un message de bienvenue
@@ -21,8 +22,23 @@ document.addEventListener("DOMContentLoaded", () => {
     testApi();
 
     audioGestion();
+    let mEc = localStorage.getItem("malusEnCours") || null;
 
-    malusEtCo();
+    if (mEc === "false" || mEc===null) {
+        localStorage.setItem("malusEnCours", false);
+        malusEtCo();
+    } else {
+        logWarning(`Détection de triche envers un malus.<br> 
+            Vous devez attendre 30 secondes avant de pouvoir accéder de nouveau au terminal.`);
+        let interval = setInterval(() => {
+            logWarning(
+                "Temps de punition terminé. Vous pouvez retourner à vos occupations."
+            );
+
+            localStorage.setItem("malusEnCours", false);
+            clearInterval(interval);
+        }, 30000);
+    }
 });
 /**
  * Permet de gérer les malus
@@ -31,9 +47,9 @@ async function malusEtCo() {
     try {
         let malus = await malusEnCours();
 
-        if(premiereFois){
-            malus=false;
-            premiereFois=false;
+        if (premiereFois) {
+            malus = false;
+            premiereFois = false;
         }
 
         if (!malus) {
@@ -49,8 +65,7 @@ async function malusEtCo() {
 // Fonctions de gestion de l'intervalle
 function demarrerIntervalle() {
     if (!intervalId) {
-        
-        intervalId = setInterval(()=>{
+        intervalId = setInterval(() => {
             creerMalus();
         }, Math.floor(Math.random() * (max - min + 1)) + min);
     }
@@ -58,7 +73,6 @@ function demarrerIntervalle() {
 
 function arreterIntervalle() {
     if (intervalId) {
-        
         clearInterval(intervalId);
         intervalId = null;
     }
@@ -199,6 +213,7 @@ async function envoyerReponse(reponse) {
         if (data["malus"] == null) {
             throw new Error("La variable est déjà instancié");
         }
+        localStorage.setItem("malusEnCours", true);
     } catch (e) {
         logError(`Erreur d'envoie de la réponse`);
         //if (await verifCo(localStorage.getItem("token"))) {
@@ -226,7 +241,7 @@ async function verifReponse(reponse) {
         const data = await response.json();
 
         if (data["reponse"]) {
-           
+            localStorage.setItem("malusEnCours", false);
             return true;
         } else {
             return false;
@@ -313,124 +328,143 @@ document.addEventListener("keydown", (e) => {
  */
 async function sendCommand(input) {
     logInfo(inputPrefix + input);
+    let mEc = localStorage.getItem("malusEnCours") || null;
 
     if (await verifAPI()) {
         let words = input.split(" ");
         let isConnect = await verifCo(localStorage.getItem("token"));
         let malus = await malusEnCours();
+       
+
         if (!malus) {
-            switch (words[0].toUpperCase()) {
-                case "HELP":
-                    if (!isConnect) {
-                        logInfo(`Voici la liste des commandes disponibles : <br>
-                    - HELP : Affiche la liste des commandes disponibles. <br>
-                    - CLEAR : Efface le contenu de la console.<br>
-                    - INSTRUCTION [matricule] [module] : Permet d'avoir les instructions pour résoudre un module donnée.<br>
-                    - REBOOT : Permet de relancer le terminal à son état initial.<br>
-                    - CONNECT  [pseudo] [mot de passe] : Permet à un administrateur de se connecter. `);
-                        localStorage.clear();
-                    } else {
-                        logInfo(`Voici la liste des commandes disponibles : <br>
-                    - HELP : Affiche la liste des commandes disponibles. <br>
-                    - CLEAR : Efface le contenu de la console.<br>
-                    - INSTRUCTION [matricule] [module] : Permet d'avoir les instructions pour résoudre un module donnée.<br>
-                    - REBOOT : Permet de relancer le terminal à son état initial.<br>
-                    - CONNECT  [pseudo] [mot de passe] : Permet à un administrateur de se connecter.<br>
-                    - CREER [pseudo] [mot de passe] : Permet à un administrateur de créer un administrateur.<br>
-                    - DECO : Permet à l'administrateur de se déconnecter. `);
-                    }
-                    break;
-                case "CLEAR":
-                    clearTerminal();
-                    break;
-                case "INSTRUCTION":
-                    if (words.length == 3) {
-                        getInstruction(words[1], words[2]);
-                    } else {
-                        logError(
-                            "Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'."
-                        );
-                    }
-                    break;
-                case "CONNECT":
-                    if (words.length == 3) {
-                        getConnect(words[1], words[2]);
-                    } else {
-                        logError(
-                            "Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'."
-                        );
-                    }
-                    break;
-                case "CREER":
-                    if (isConnect === true) {
-                        if (words.length == 3) {
-                            creerAdmin(words[1], words[2]);
-                        } else {
-                            logError(
-                                "Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'."
-                            );
-                        }
-                    } else {
-                        logError(
-                            "Commande inconnue. Entrez 'HELP' pour plus d'informations."
-                        );
-                    }
-                    break;
-                case "DECO":
-                    if (isConnect) {
-                        clearTerminal();
-                        logInfo(`${localStorage.getItem(
-                            "utilisateur"
-                        )}, vous venez de vous déconnecter.<br>
-                        Passez bonne journée :).`);
-                        localStorage.clear();
-                        demarrerIntervalle();
-                    } else {
-                        logError(
-                            "Commande inconnue. Entrez 'HELP' pour plus d'informations."
-                        );
-                    }
-                    break;
-                case "BSP":
-                    logInfo(`Bonjour,<br>
-                 Bienvenue dans le programme international de Bash Space Program. <br>
-                 Vous êtes actuellement sur le magnifique terminal de 14e génération.<br>
-                 Afin d'assurer le bon déroulement  de la mission, nous vous prions<br>
-                 de bien rester calme à toute les éventualités. Votre pays a besoin de <br>
-                 vos capacité pour que cette mission soit un grand succès. L'objectif que <br>
-                 vous avez est simple comme bonjour. Vous devez seulement communiquer<br>
-                 avec notre capitaine à bord de notre vaisseau.`);
-                    break;
-                case "REBOOT":
-                    location.reload();
-                    break;
-                default:
-                    logError(
-                        "Commande inconnue. Entrez 'HELP' pour plus d'informations."
-                    );
-                    break;
-            }
-        } else {
-            if (words[0].toUpperCase() == "RESULT") {
+            await commande(words, isConnect);
+        } else if (malus && mEc === "true") {
+            if (words[0].toUpperCase() == "RESULT" ) {
                 const result = await verifReponse(words[1]);
                 if (result) {
                     location.reload();
                     logWarning(
                         "Vous pouvez dès maintenant retourner dans vos anciennes occupations."
                     );
-                    
                 } else {
                     logError("Vous n'avez pas réussi. Veuillez réessayer.");
                 }
-            }else{
-                logError("Commande inconnue. Veuillez réessayer.");
+            } else {
+                logError(
+                    "Vous devez compléter le malus avant de pouvoir chercher des instructions."
+                );
             }
+        } else if (mEc === "false" || mEc === null) {
+            await commande(words, isConnect);
+        } else {
+            logError("Un erreur c'est produite.");
         }
     } else {
         location.reload();
     }
 }
-
+/**
+ * Permet de gérer les commandes.
+ * @param {String[]} words
+ * @param {boolean} isConnect
+ */
+async function commande(words, isConnect) {
+    switch (words[0].toUpperCase()) {
+        case "HELP":
+            if (!isConnect) {
+                logInfo(`Voici la liste des commandes disponibles : <br>
+            - HELP : Affiche la liste des commandes disponibles. <br>
+            - CLEAR : Efface le contenu de la console.<br>
+            - INSTRUCTION [matricule] [module] : Permet d'avoir les instructions pour résoudre un module donnée.<br>
+            - REBOOT : Permet de relancer le terminal à son état initial.<br>
+            - CONNECT  [pseudo] [mot de passe] : Permet à un administrateur de se connecter. `);
+                localStorage.clear();
+            } else {
+                logInfo(`Voici la liste des commandes disponibles : <br>
+            - HELP : Affiche la liste des commandes disponibles. <br>
+            - CLEAR : Efface le contenu de la console.<br>
+            - INSTRUCTION [matricule] [module] : Permet d'avoir les instructions pour résoudre un module donnée.<br>
+            - REBOOT : Permet de relancer le terminal à son état initial.<br>
+            - CONNECT  [pseudo] [mot de passe] : Permet à un administrateur de se connecter.<br>
+            - CREER [pseudo] [mot de passe] : Permet à un administrateur de créer un administrateur.<br>
+            - DECO : Permet à l'administrateur de se déconnecter. `);
+            }
+            break;
+        case "CLEAR":
+            clearTerminal();
+            break;
+        case "INSTRUCTION":
+            if (words.length == 3) {
+                getInstruction(words[1], words[2]);
+            } else {
+                logError(
+                    "Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'."
+                );
+            }
+            break;
+        case "CONNECT":
+            if (words.length == 3) {
+                getConnect(words[1], words[2]);
+            } else {
+                logError(
+                    "Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'."
+                );
+            }
+            break;
+        case "CREER":
+            if (isConnect === true) {
+                if (words.length == 3) {
+                    creerAdmin(words[1], words[2]);
+                } else {
+                    logError(
+                        "Entrée incomplète. Veuillez recommencer ou entrer la commande 'HELP'."
+                    );
+                }
+            } else {
+                logError(
+                    "Commande inconnue. Entrez 'HELP' pour plus d'informations."
+                );
+            }
+            break;
+        case "DECO":
+            if (isConnect) {
+                clearTerminal();
+                logInfo(`${localStorage.getItem(
+                    "utilisateur"
+                )}, vous venez de vous déconnecter.<br>
+                Passez bonne journée :).`);
+                localStorage.clear();
+                demarrerIntervalle();
+            } else {
+                logError(
+                    "Commande inconnue. Entrez 'HELP' pour plus d'informations."
+                );
+            }
+            break;
+        case "BSP":
+            logInfo(`Bonjour,<br>
+         Bienvenue dans le programme international de Bash Space Program. <br>
+         Vous êtes actuellement sur le magnifique terminal de 14e génération.<br>
+         Afin d'assurer le bon déroulement  de la mission, nous vous prions<br>
+         de bien rester calme à toute les éventualités. Votre pays a besoin de <br>
+         vos capacité pour que cette mission soit un grand succès. L'objectif que <br>
+         vous avez est simple comme bonjour. Vous devez seulement communiquer<br>
+         avec notre capitaine à bord de notre vaisseau.`);
+            break;
+        case "REBOOT":
+            location.reload();
+            break;
+        default:
+            logError(
+                "Commande inconnue. Entrez 'HELP' pour plus d'informations."
+            );
+            break;
+    }
+}
+/**
+ * Permet de vérifier si l'api est connecté.
+ * @returns retourne vrai si l'api est connecté et false s'il l'api n'est pas connecté
+ */
 async function verifAPI() {
     try {
         let url = `${urlPrefix}/api/v1`;
@@ -562,7 +596,7 @@ async function getConnect(pseudo, mdp) {
         )}, <br>
              Utilisez la commande 'HELP' pour voir les commandes administratives que vous avez accès.
              <br>De plus, vous avez accès aux messages de débogage.`);
-             arreterIntervalle();
+        arreterIntervalle();
     } catch (e) {
         //Renvoie une erreur si le fetch n'a pas fonctionné
         logError(
