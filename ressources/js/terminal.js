@@ -193,7 +193,7 @@ async function popUp() {
     }
     await envoyerReponse(41);
     await verifReponse(41);
-    window.reload();
+    demarrerIntervalle();
 }
 /**
  * Permet d'envoyer dans le serveur interne la réponse d'un malus X.
@@ -354,14 +354,14 @@ async function sendCommand(input) {
                 }
             } else {
                 logError(
-                    "Vous avez modifié la valeur locale. Attendez le prochain malus pour vous racheter."
+                    "Commande non autorisée détectée. Veuillez respecter les instructions."
                 );
             }
         } else if (mEc === "false" || mEc === null) {
             if(malus){
             await commande(words, isConnect);
             }else{
-                logWarning("Vous avez modifier la valeur local. Donc attendez au prochain malus pour vous rachetez.")
+                logWarning("Vous avez modifié la valeur locale. Attendez le prochain malus pour vous racheter.")
             }
         } else {
             logError("Un erreur c'est produite.");
