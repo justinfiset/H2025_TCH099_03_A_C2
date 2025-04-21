@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     audioGestion();
     let mEc = localStorage.getItem("malusEnCours") || null;
 
-    if (mEc === "false" || mEc === null) {
+    if (mEc === "false" || mEc===null) {
         localStorage.setItem("malusEnCours", false);
         malusEtCo();
     } else {
@@ -84,16 +84,19 @@ function arreterIntervalle() {
 async function creerMalus() {
     switch (Math.floor(Math.random() * 3)) {
         case 1:
+            
             logWarning("Test de connaissance !");
             arreterIntervalle();
             testDeConnaissance();
             break;
         case 2:
+            
             logWarning("Un captcha !");
             arreterIntervalle();
             await captcha();
             break;
         case 0:
+            
             logWarning("Une fenêtre pop-up !");
             arreterIntervalle();
             await popUp();
@@ -176,13 +179,13 @@ async function popUp() {
             window.open("https://astrobiology.nasa.gov/", "_blank");
             break;
         case 7:
-            window.open("https://www.planetariummontreal.com/", "_blank");
+            window.open("https://www.blueorigin.com/fr-FR", "_blank");
             break;
         case 8:
             window.open("https://www.planetary.org/", "_blank");
             break;
         case 9:
-            window.open("https://chandra.harvard.edu/", "_blank");
+            window.open("https://www.asc-csa.gc.ca/fra/", "_blank");
             break;
         case 10:
             window.open("https://www.cfa.harvard.edu/", "_blank");
@@ -334,20 +337,22 @@ async function sendCommand(input) {
         let words = input.split(" ");
         let isConnect = await verifCo(localStorage.getItem("token"));
         let malus = await malusEnCours();
+       
 
         if (!malus) {
             await commande(words, isConnect);
         } else if (malus && mEc === "true") {
-            if (words[0].toUpperCase() == "RESULT") {
+            if (words[0].toUpperCase() == "RESULT" ) {
                 const result = await verifReponse(words[1]);
                 if (result) {
                     demarrerIntervalle();
                     logWarning(
-                        "Vous pouvez dès maintenant retourner dans vos anciennes occupations."
+                        "Vous pouvez dès maintenant retourner à vos anciennes occupations."
                     );
                 } else {
                     logError("Vous n'avez pas réussi. Veuillez réessayer.");
                     localStorage.setItem("malusEnCours", false);
+                    demarrerIntervalle();
                     clearTerminal();
                 }
             } else {
@@ -356,12 +361,10 @@ async function sendCommand(input) {
                 );
             }
         } else if (mEc === "false" || mEc === null) {
-            if (malus) {
-                await commande(words, isConnect);
-            } else {
-                logWarning(
-                    "Vous avez modifié la valeur locale. Attendez le prochain malus pour vous racheter."
-                );
+            if(malus){
+            await commande(words, isConnect);
+            }else{
+                logWarning("Vous avez modifié la valeur locale. Attendez le prochain malus pour vous racheter.")
             }
         } else {
             logError("Un erreur c'est produite.");
