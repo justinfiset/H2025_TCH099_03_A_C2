@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             localStorage.setItem("malusEnCours", false);
             clearInterval(interval);
+            demarrerIntervalle();
         }, 30000);
     }
 });
