@@ -84,19 +84,19 @@ function arreterIntervalle() {
 async function creerMalus() {
     switch (Math.floor(Math.random() * 3)) {
         case 1:
-            clearTerminal();
+            
             logWarning("Test de connaissance !");
             arreterIntervalle();
             testDeConnaissance();
             break;
         case 2:
-            clearTerminal();
+            
             logWarning("Un captcha !");
             arreterIntervalle();
             await captcha();
             break;
         case 0:
-            clearTerminal();
+            
             logWarning("Une fenêtre pop-up !");
             arreterIntervalle();
             await popUp();
