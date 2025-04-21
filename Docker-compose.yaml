@@ -2,16 +2,24 @@ version: '3.8'
 
 services:
   web:
-    image: php:8-apache
+    build: .
     container_name: php-apache-container
     ports:
       - "9000:80"
     volumes:
       - .:/var/www/html
-    command: >
-      bash -c "echo 'ServerName localhost' >> /etc/apache2/apache2.conf && apache2-foreground"
+    environment:
+      - XDEBUG_ENABLE=0 # Désactivé par défaut
+      - XDEBUG_CONFIG="client_host=host.docker.internal"
     networks:
       - my-network
+    # La commande est maintenant gérée par le Dockerfile
+    # Mais on garde la configuration Apache nécessaire
+    command: >
+      bash -c "docker-php-ext-enable gd xdebug
+      && a2enmod rewrite
+      && echo 'ServerName localhost' >> /etc/apache2/apache2.conf
+      && apache2-foreground"
 
 networks:
   my-network:

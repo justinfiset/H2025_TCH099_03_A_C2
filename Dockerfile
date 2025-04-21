@@ -1,37 +1,30 @@
-# Utiliser l'image PHP 8.2 CLI comme base
-FROM php:8.2-cli
+# Utiliser l'image PHP 8.2 Apache comme base
+FROM php:8.2-apache
 
-# Copier les fichiers de l'application dans le conteneur
-COPY . /usr/src/myapp
-
-# Définir le répertoire de travail
-WORKDIR /usr/src/myapp
-
-# Installer les dépendances système nécessaires pour GD
+# Installer les dépendances système pour GD avec WebP
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
         libpng-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+        libwebp-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) gd \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Configurer Xdebug
-ENV XDEBUG_ENABLE=0
-RUN pecl config-set preferred_state beta \
-    && pecl install -o -f xdebug \
-    && docker-php-ext-enable xdebug \
-    && pecl config-set preferred_state stable \
+# Installer Xdebug
+RUN pecl install -o -f xdebug \
     && rm -rf /tmp/pear
 
-# Copier le fichier de configuration Xdebug désactivé
-COPY ./99-xdebug.ini.disabled /usr/local/etc/php/conf.d/99-xdebug.ini.disabled
+# Configuration conditionnelle de Xdebug
+COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini.disabled
 
-# Copier le script de démarrage
-COPY ./start /usr/local/bin/start
-RUN chmod +x /usr/local/bin/start
+# Activer les réécritures Apache
+RUN a2enmod rewrite
 
-# Définir la commande par défaut
-CMD ["start"]
+# Définir le répertoire de travail Apache
+WORKDIR /var/www/html
+
+# Copier les fichiers de l'application
+COPY . /var/www/html/

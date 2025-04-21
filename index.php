@@ -1,6 +1,6 @@
 <?php
 
-session_start();
+require("./config.php");
 
 
 $date = new DateTime('now', new DateTimeZone('America/New_York'));
@@ -18,6 +18,7 @@ $_SESSION["time"] = $dateLocale;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <title>BSP Terminal</title>
 
     <link rel="stylesheet" href="./ressources/css/normalize.css">
