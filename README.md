@@ -81,7 +81,7 @@
         - [Linux/Mac](serverLaunchLinuxMac.sh)
     4. Fermez la page du client web, puis appuyer dans l'invite de commande n'importe quel touche pour arrêter l'application web.
 
-    **Remarque<sub>1</sub>** : Sous Linux/MacOS, rendez le script avec :
+    **Remarque<sub>1</sub>** : Sous Linux/MacOS, rendez le script exécutable avec :
 
     ```bash
     chmod +x serverLaunchLinuxMac
