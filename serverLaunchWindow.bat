@@ -12,14 +12,20 @@ echo PHP est installe. Lancement du serveur...
 start "" http://localhost:9000
 start cmd /k php -S localhost:9000
 
-:: Wait for the user to close the browser
-echo Appuyez sur n'importe quelle touche pour arrêter le serveur après avoir fermé le navigateur...
+:: Attend que l'utilisateur ferme le navigateur
+echo Appuyez sur n'importe quelle touche pour arreter le serveur apres avoir ferme le navigateur...
 pause >nul
 
-:: Stop PHP server
-echo Stopping PHP server...
+:: Arrête le server PHP
+echo "Arret du serveur PHP..."
 taskkill /IM php.exe /F >nul 2>&1
 
-echo Done.
+:: Vérifie si le processus du serveur PHP est toujours en cours d'exécution
+tasklist | findstr /I "php.exe" >nul 2>&1
+if %ERRORLEVEL% EQU 0 (
+    echo "Le serveur PHP n'a pas pu être arrêté correctement."
+) else (
+    echo "Serveur PHP arrêté."
+)
 endlocal
 exit

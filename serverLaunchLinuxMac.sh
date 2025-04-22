@@ -22,7 +22,7 @@ fi
 php -S localhost:9000 &
 
 # Attend que l'utilisateur ferme le navigateur
-read -p "Appuyez sur une touche pour arrêter le serveur après avoir fermé le navigateur..."
+read -p "Appuyez n'importe quelle touche pour arreter le serveur apres avoir ferme le navigateur..."
 
 # Arrête le serveur PHP
 echo "Arrêt du serveur PHP..."
