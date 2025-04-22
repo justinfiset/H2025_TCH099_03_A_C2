@@ -6,6 +6,7 @@ let intervalId = null; //Pour initialisé l'interval
 let premiereFois = true; //Pour savoir si c'est la première fois que la page à été reload
 let max = 180000; //Temps maximum avant d'avoir un malus
 let min = 120000; //Temps minimum avant d'avoir un malus
+let interMal = null;
 
 /**
  * Évenement qui apelle la fonction d'initialisation du termianl lorsque le contenu de la page est chargé
@@ -24,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     audioGestion();
     let mEc = localStorage.getItem("malusEnCours") || null;
 
-    if (mEc === "false" || mEc===null) {
+    if (mEc === "false" || mEc === null) {
         localStorage.setItem("malusEnCours", false);
         malusEtCo();
     } else {
@@ -63,7 +64,9 @@ async function malusEtCo() {
     }
 }
 
-// Fonctions de gestion de l'intervalle
+/**
+ * Permet de démarrer l'intervalle  de la création de malus.
+ */
 function demarrerIntervalle() {
     if (!intervalId) {
         intervalId = setInterval(() => {
@@ -71,7 +74,9 @@ function demarrerIntervalle() {
         }, Math.floor(Math.random() * (max - min + 1)) + min);
     }
 }
-
+/**
+ * Permet d'arrêter l'intervalle de la création de malus.
+ */
 function arreterIntervalle() {
     if (intervalId) {
         clearInterval(intervalId);
@@ -85,19 +90,16 @@ function arreterIntervalle() {
 async function creerMalus() {
     switch (Math.floor(Math.random() * 3)) {
         case 1:
-            
             logWarning("Test de connaissance !");
             arreterIntervalle();
-            testDeConnaissance();
+            await testDeConnaissance();
             break;
         case 2:
-            
             logWarning("Un captcha !");
             arreterIntervalle();
             await captcha();
             break;
         case 0:
-            
             logWarning("Une fenêtre pop-up !");
             arreterIntervalle();
             await popUp();
@@ -218,6 +220,13 @@ async function envoyerReponse(reponse) {
             throw new Error("La variable est déjà instancié");
         }
         localStorage.setItem("malusEnCours", true);
+
+        interMal = setInterval(() => {
+            clearTerminal();
+            logWarning("Le délai pour effectuer le malus est dépassé.");
+            localStorage.setItem("malusEnCours", false);
+            demarrerIntervalle();
+        }, 30000);
     } catch (e) {
         logError(`Erreur d'envoie de la réponse`);
         //if (await verifCo(localStorage.getItem("token"))) {
@@ -246,6 +255,7 @@ async function verifReponse(reponse) {
 
         if (data["reponse"]) {
             localStorage.setItem("malusEnCours", false);
+            clearInterval(interMal);
             return true;
         } else {
             return false;
@@ -338,12 +348,11 @@ async function sendCommand(input) {
         let words = input.split(" ");
         let isConnect = await verifCo(localStorage.getItem("token"));
         let malus = await malusEnCours();
-       
 
         if (!malus) {
             await commande(words, isConnect);
         } else if (malus && mEc === "true") {
-            if (words[0].toUpperCase() == "RESULT" ) {
+            if (words[0].toUpperCase() == "RESULT") {
                 const result = await verifReponse(words[1]);
                 if (result) {
                     demarrerIntervalle();
@@ -362,10 +371,12 @@ async function sendCommand(input) {
                 );
             }
         } else if (mEc === "false" || mEc === null) {
-            if(malus){
-            await commande(words, isConnect);
-            }else{
-                logWarning("Vous avez modifié la valeur locale. Attendez le prochain malus pour vous racheter.")
+            if (malus) {
+                await commande(words, isConnect);
+            } else {
+                logWarning(
+                    "Vous avez modifié la valeur locale. Attendez le prochain malus pour vous racheter."
+                );
             }
         } else {
             logError("Un erreur c'est produite.");
