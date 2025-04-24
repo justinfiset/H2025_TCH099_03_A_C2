@@ -258,6 +258,7 @@ async function verifReponse(reponse) {
             clearInterval(interMal);
             return true;
         } else {
+            clearInterval(interMal);
             return false;
         }
     } catch (e) {
